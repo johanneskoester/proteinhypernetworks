@@ -1,0 +1,10 @@
+proteinHypernetwork
+proteinHypernetwork.constraints
+proteinHypernetwork.constraints.filters
+proteinHypernetwork.decoder
+proteinHypernetwork.encoder
+proteinHypernetwork.interactions
+proteinHypernetwork.interactions.filters
+proteinHypernetwork.proteins
+proteinHypernetwork.proteins.filters
+proteinHypernetwork.util
