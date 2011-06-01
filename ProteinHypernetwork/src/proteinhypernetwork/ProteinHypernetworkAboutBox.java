@@ -35,7 +35,7 @@ public class ProteinHypernetworkAboutBox extends javax.swing.JDialog {
     javax.swing.JLabel homepageLabel = new javax.swing.JLabel();
     javax.swing.JLabel appHomepageLabel = new javax.swing.JLabel();
     javax.swing.JLabel appDescLabel = new javax.swing.JLabel();
-    javax.swing.JLabel imageLabel = new javax.swing.JLabel();
+    jLabel1 = new javax.swing.JLabel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(proteinhypernetwork.ProteinHypernetworkApp.class).getContext().getResourceMap(ProteinHypernetworkAboutBox.class);
@@ -76,16 +76,15 @@ public class ProteinHypernetworkAboutBox extends javax.swing.JDialog {
     appDescLabel.setText(resourceMap.getString("appDescLabel.text")); // NOI18N
     appDescLabel.setName("appDescLabel"); // NOI18N
 
-    imageLabel.setIcon(resourceMap.getIcon("imageLabel.icon")); // NOI18N
-    imageLabel.setName("imageLabel"); // NOI18N
+    jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+    jLabel1.setName("jLabel1"); // NOI18N
 
     org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
       .add(layout.createSequentialGroup()
-        .add(imageLabel)
-        .add(23, 23, 23)
+        .addContainerGap()
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
           .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -94,10 +93,11 @@ public class ProteinHypernetworkAboutBox extends javax.swing.JDialog {
               .add(homepageLabel))
             .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+              .add(jLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
               .add(appVersionLabel)
               .add(appVendorLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
           .add(org.jdesktop.layout.GroupLayout.LEADING, appTitleLabel)
-          .add(org.jdesktop.layout.GroupLayout.LEADING, appDescLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+          .add(org.jdesktop.layout.GroupLayout.LEADING, appDescLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
           .add(closeButton))
         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
         .add(appHomepageLabel))
@@ -110,13 +110,10 @@ public class ProteinHypernetworkAboutBox extends javax.swing.JDialog {
             .add(119, 119, 119)
             .add(appHomepageLabel))
           .add(layout.createSequentialGroup()
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-              .add(org.jdesktop.layout.GroupLayout.LEADING, imageLabel, 0, 0, Short.MAX_VALUE)
-              .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                .addContainerGap()
-                .add(appTitleLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(appDescLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+            .addContainerGap()
+            .add(appTitleLabel)
+            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+            .add(appDescLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
               .add(versionLabel)
@@ -126,8 +123,10 @@ public class ProteinHypernetworkAboutBox extends javax.swing.JDialog {
               .add(vendorLabel)
               .add(appVendorLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-            .add(homepageLabel)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 74, Short.MAX_VALUE)
+            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+              .add(homepageLabel)
+              .add(jLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(closeButton)))
         .addContainerGap())
     );
@@ -137,6 +136,7 @@ public class ProteinHypernetworkAboutBox extends javax.swing.JDialog {
     
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton closeButton;
+  private javax.swing.JLabel jLabel1;
   // End of variables declaration//GEN-END:variables
     
 }
