@@ -51,7 +51,6 @@ public abstract class SPINComplexPrediction extends Processor {
    *
    * @param hypernetwork the protein hypernetwork
    * @param perturbations the perturbations
-   * @param mergeSimilarityThreshold deprecated
    * @param threadCount the number of allowed parallel threads
    */
   public SPINComplexPrediction(ProteinHypernetwork hypernetwork, Perturbations perturbations, int threadCount) {

@@ -79,8 +79,8 @@ public class FastLCMA<V, E, C extends Collection<V>>  implements Transformer<Und
   /**
    * Transform an undirected loop free(!) graph to a collection of dense complexes.
    *
-   * @param UndirectedGraph<V,E> g the graph
-   * @return Collection<C> collection of complexes
+   * @param g the graph
+   * @return collection of complexes
    */
   public Collection<C> transform(UndirectedGraph<V, E> g) {
     return generateComplexes(transformToSubgraphs(g));

@@ -37,7 +37,7 @@ public class PISPrediction extends Processor {
   /**
    * Constructor of class PISPrediction.
    * 
-   * @param lHypernetwork the logic hypernetwork instance
+   * @param hypernetwork the logic hypernetwork instance
    * @param threadCount the number of threads
    * @param doInteractions whether interactions PIS should be predicted
    */
