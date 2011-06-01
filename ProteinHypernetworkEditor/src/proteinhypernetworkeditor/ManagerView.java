@@ -1,0 +1,351 @@
+/* Copyright (c) 2010, Johannes Köster <johannes.koester@tu-dortmund.de>
+ * All rights reserved.
+ *
+ * This software is open-source under the BSD license; see "license.txt"
+ * for a description.
+ */
+
+/*
+ * AddProteinView.java
+ *
+ * Created on 01.03.2010, 12:36:13
+ */
+package proteinhypernetworkeditor;
+
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Collection;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
+import util.OneColumnTable;
+
+/**
+ *
+ * @author Johannes Köster <johannes.koester@tu-dortmund.de>
+ */
+public class ManagerView<T extends OneColumnTable & ManagedTableModel> extends javax.swing.JPanel {
+
+  private T tableModel;
+  private ManagedTableCellEditor cellEditor;
+  private TableRowSorter<ManagedTableModel> sorter;
+
+  public ManagerView(T m, ManagedTableCellEditor e, TableCellRenderer r) {
+    initComponents();
+
+    setModel(m);
+    e.setManagerView(this);
+    setCellEditor(e);
+
+    sorter = new TableRowSorter<ManagedTableModel>(tableModel);
+    table.setRowSorter(sorter);
+
+    table.setTableHeader(null);
+    table.setDefaultRenderer(Object.class, r);
+    table.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+    tableModel.addTableModelListener(new TableModelListener() {
+
+      @Override
+      public void tableChanged(TableModelEvent e) {
+        remove.setEnabled(tableModel.getRowCount() > 0);
+      }
+    });
+
+    table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        table.setRowHeight(table.getRowHeight());
+        int[] rows =  table.getSelectedRows();
+        if(table.getSelectedRows().length == 1) {
+          adjustRow(table.getSelectedRow());
+        }
+      }
+    });
+
+    table.addPropertyChangeListener(new PropertyChangeListener() {
+
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        boolean enableButtons = !table.isEditing();
+        add.setEnabled(enableButtons);
+        remove.setEnabled(enableButtons);
+      }
+    });
+
+    table.setRowHeight(((ManagedTableCellRenderer2)r).getPreferredSize().height);
+  }
+
+  public ManagerView(T m, ManagedTableCellEditor e) {
+    this(m, e, new ManagedTableCellRenderer2());
+  }
+
+  protected void setInfoText(String text) {
+    infolabel.setText(text);
+  }
+
+  public T getTableModel() {
+    return tableModel;
+  }
+
+  public JTable getTable() {
+    return table;
+  }
+
+  public void update() {
+    if(table.isEditing())
+      cellEditor.fireEditingStopped();
+  }
+
+  private void setCellEditor(ManagedTableCellEditor e) {
+    table.getColumnModel().getColumn(0).setCellEditor(e);
+    cellEditor = e;
+  }
+
+  private void setModel(T m) {
+    table.setModel(m);
+    tableModel = m;
+  }
+
+  protected JButton getAddButton() {
+    return add;
+  }
+
+  private void adjustRow(int i) {
+    Component comp = table.getCellRenderer(i, 0).getTableCellRendererComponent(table, table.getModel().getValueAt(i, 0), false, false, i, 0);
+    Dimension d = comp.getPreferredSize();
+    table.setRowHeight(i, comp.getPreferredSize().height);
+  }
+
+  protected void addAction() {
+  }
+
+  protected void selectRow(int row) {
+    table.changeSelection(row, 0, false, false);
+  }
+
+  protected int getRow(Object o) {
+    return table.convertRowIndexToView(tableModel.getRow(o));
+  }
+
+  protected void selectRow(Object o) {
+    selectRow(getRow(o));
+  }
+
+  protected void selectRows(Collection c) {
+    table.clearSelection();
+
+    table.setColumnSelectionAllowed(false);
+    table.setRowSelectionAllowed(true);
+    
+    for(Object o : c) {
+      int row = getRow(o);
+      table.addRowSelectionInterval(row, row);
+    }
+
+    int[] rows = table.getSelectedRows();
+    int minRow = rows[0];
+    for(int r : rows) {
+      if(r < minRow)
+        minRow = r;
+    }
+
+    table.scrollRectToVisible(new Rectangle(0, table.getRowHeight()*minRow, 1,
+            table.getVisibleRect().height));
+  }
+
+  public Object getValueAt(int row) {
+    return table.getValueAt(row, 0);
+  }
+
+  protected void filterRows(RowFilter filter) {
+    sorter.setRowFilter(filter);
+  }
+
+  protected void editRow(int row) {
+    selectRow(row);
+    table.editCellAt(row, 0);
+    table.requestFocus();
+
+  }
+
+  protected void editLastRow() {
+    editRow(table.getRowCount()-1);
+  }
+
+  /** This method is called from within the constructor to
+   * initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is
+   * always regenerated by the Form Editor.
+   */
+  @SuppressWarnings("unchecked")
+  // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+  private void initComponents() {
+    java.awt.GridBagConstraints gridBagConstraints;
+
+    jScrollPane1 = new javax.swing.JScrollPane();
+    table = new javax.swing.JTable();
+    controls = new javax.swing.JPanel();
+    add = new javax.swing.JButton();
+    remove = new javax.swing.JButton();
+    filter = new javax.swing.JTextField();
+    infolabel = new javax.swing.JLabel();
+
+    setName("Form"); // NOI18N
+    setLayout(new java.awt.GridBagLayout());
+
+    jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+    table.setModel(new javax.swing.table.DefaultTableModel(
+      new Object [][] {
+
+      },
+      new String [] {
+
+      }
+    ));
+    table.setName("table"); // NOI18N
+    jScrollPane1.setViewportView(table);
+    table.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 0;
+    gridBagConstraints.gridwidth = 2;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.ipadx = 214;
+    gridBagConstraints.ipady = 171;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 1.0;
+    add(jScrollPane1, gridBagConstraints);
+
+    controls.setAlignmentX(0.0F);
+    controls.setAlignmentY(0.0F);
+    controls.setName("controls"); // NOI18N
+    controls.setLayout(new javax.swing.BoxLayout(controls, javax.swing.BoxLayout.LINE_AXIS));
+
+    org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(proteinhypernetworkeditor.ProteinHypernetworkEditorApp.class).getContext().getResourceMap(ManagerView.class);
+    add.setText(resourceMap.getString("add.text")); // NOI18N
+    add.setToolTipText(resourceMap.getString("add.toolTipText")); // NOI18N
+    add.setName("add"); // NOI18N
+    add.putClientProperty("JButton.buttonType", "segmented");
+    add.putClientProperty("JButton.segmentPosition", "first");
+    add.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        addActionPerformed(evt);
+      }
+    });
+    controls.add(add);
+
+    remove.setText(resourceMap.getString("remove.text")); // NOI18N
+    remove.setToolTipText(resourceMap.getString("remove.toolTipText")); // NOI18N
+    remove.setEnabled(false);
+    remove.setName("remove"); // NOI18N
+    remove.putClientProperty("JButton.buttonType", "segmented");
+    remove.putClientProperty("JButton.segmentPosition", "last");
+    remove.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        removeActionPerformed(evt);
+      }
+    });
+    controls.add(remove);
+
+    filter.setText(resourceMap.getString("filter.text")); // NOI18N
+    filter.setToolTipText(resourceMap.getString("filter.toolTipText")); // NOI18N
+    filter.setMinimumSize(new java.awt.Dimension(200, 28));
+    filter.setName("filter"); // NOI18N
+    filter.setPreferredSize(new java.awt.Dimension(200, 28));
+    filter.putClientProperty("JTextField.variant", "search");
+    filter.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        filterActionPerformed(evt);
+      }
+    });
+    controls.add(filter);
+
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 1;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+    add(controls, gridBagConstraints);
+
+    infolabel.setText(resourceMap.getString("infolabel.text")); // NOI18N
+    infolabel.setMaximumSize(new java.awt.Dimension(300, 28));
+    infolabel.setName("infolabel"); // NOI18N
+    infolabel.setPreferredSize(new java.awt.Dimension(0, 28));
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 1;
+    gridBagConstraints.gridy = 1;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    add(infolabel, gridBagConstraints);
+  }// </editor-fold>//GEN-END:initComponents
+
+    private void removeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeActionPerformed
+      if(table.isEditing())
+        cellEditor.fireEditingCanceled();
+
+      int[] rows = table.getSelectedRows();
+
+      for(int i=0; i<rows.length; i++) {
+        rows[i] = table.getRowSorter().convertRowIndexToModel(rows[i]);
+      }
+
+      if(rows.length == 1) {
+        removeAction(rows[0]);
+      }
+      else if(rows.length > 1) {
+        removeAction(rows);
+      }
+    }//GEN-LAST:event_removeActionPerformed
+
+    protected void removeAction(int row) {
+      
+    }
+
+    protected void removeAction(int[] rows) {
+      
+    }
+
+    private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
+      addAction();
+    }//GEN-LAST:event_addActionPerformed
+
+    private void filterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterActionPerformed
+      org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(proteinhypernetworkeditor.ProteinHypernetworkEditorApp.class).getContext().getResourceMap(ManagerView.class);
+      
+      final String filterBy = ((JTextField)evt.getSource()).getText();
+      if(filterBy.equals(resourceMap.getString("filter.text")))
+        return;
+      if(filterBy.isEmpty())
+        filterRows(null);
+      else
+        filterAction(filterBy);
+    }//GEN-LAST:event_filterActionPerformed
+
+    protected void filterAction(String text) {
+
+    }
+
+  // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton add;
+  private javax.swing.JPanel controls;
+  private javax.swing.JTextField filter;
+  private javax.swing.JLabel infolabel;
+  private javax.swing.JScrollPane jScrollPane1;
+  private javax.swing.JButton remove;
+  private javax.swing.JTable table;
+  // End of variables declaration//GEN-END:variables
+}
