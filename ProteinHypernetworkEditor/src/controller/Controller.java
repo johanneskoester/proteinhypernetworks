@@ -198,7 +198,8 @@ public class Controller {
       Protein meip1 = hypernetwork.getProteins().getProteinById(trimQuotes(cs.next()));
       Protein meip2 = hypernetwork.getProteins().getProteinById(trimQuotes(cs.next()));
 
-
+      if(host == null || meip1 == null || meip2 == null)
+        continue;
 
       Collection<Interaction> is = fp.filter(hypernetwork.getInteractions(), host);
       Collection<Interaction> meis1 = fp.filter(is, meip1);
