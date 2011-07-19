@@ -96,6 +96,9 @@ public class Constraint implements Comparable<Constraint>, Listener {
 
   @Override
   public String toString() {
+    if(implication == null) {
+      return "empty constraint";
+    }
     if(humanLanguageFormatting)
       return humanLanguageFormatter.transform(implication);
     else
