@@ -22,7 +22,7 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>LibModalLogic</foreign-project>
+                <foreign-project>LibModalLogic-1</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
