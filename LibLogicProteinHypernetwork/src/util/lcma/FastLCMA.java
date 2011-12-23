@@ -7,6 +7,7 @@
 package util.lcma;
 
 import edu.uci.ics.jung.graph.UndirectedGraph;
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;

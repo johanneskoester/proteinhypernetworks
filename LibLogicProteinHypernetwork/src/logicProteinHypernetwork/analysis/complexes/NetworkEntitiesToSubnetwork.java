@@ -4,14 +4,15 @@
  * This software is open-source under the BSD license; see "license.txt"
  * for a description.
  */
-
 package logicProteinHypernetwork.analysis.complexes;
 
+import edu.uci.ics.jung.graph.util.Pair;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.collections15.Transformer;
 import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.interactions.Interaction;
+import proteinHypernetwork.proteins.Protein;
 
 /**
  * Transforms a network entities into a protein subnetwork
@@ -20,6 +21,20 @@ import proteinHypernetwork.interactions.Interaction;
  */
 public class NetworkEntitiesToSubnetwork implements Transformer<Iterable<NetworkEntity>, ProteinSubnetwork> {
 
+  private boolean noSelfInteractions;
+  private ProteinSubnetwork ppin;
+  private boolean addNeighbors;
+
+  public NetworkEntitiesToSubnetwork() {
+    this(null, false, false);
+  }
+
+  public NetworkEntitiesToSubnetwork(ProteinSubnetwork ppin, boolean noSelfInteractions, boolean addNeighbors) {
+    this.noSelfInteractions = noSelfInteractions;
+    this.ppin = ppin;
+    this.addNeighbors = addNeighbors;
+  }
+  
   /**
    * Returns protein subnetwork for given network entities.
    * 
@@ -30,7 +45,6 @@ public class NetworkEntitiesToSubnetwork implements Transformer<Iterable<Network
     return transform(entities, new HashSet<NetworkEntity>());
   }
 
-
   /**
    * Returns protein subnetwork for given network entities while excluding others.
    *
@@ -40,11 +54,15 @@ public class NetworkEntitiesToSubnetwork implements Transformer<Iterable<Network
    */
   public ProteinSubnetwork transform(Iterable<NetworkEntity> entities, Set<NetworkEntity> exclude) {
     ProteinSubnetwork graph = new ProteinSubnetwork();
-    for(NetworkEntity e : entities) {
-      if(e instanceof Interaction && !exclude.contains(e)) {
-        Interaction i = (Interaction)e;
-        if(!graph.containsEdge(i)) {
-          if(!i.isSelfInteraction()) {
+    Set<Protein> vertices = new HashSet<Protein>(graph.getVertices());
+    for (NetworkEntity e : entities) {
+      if(e instanceof Protein) {
+        vertices.add((Protein)e);
+      }
+      if (e instanceof Interaction && !exclude.contains(e)) {
+        Interaction i = (Interaction) e;
+        if (!graph.containsEdge(i)) {
+          if (!noSelfInteractions || !i.isSelfInteraction()) {
             /** @todo find a more general place to remove self interactions for all algorithms that really need it */
             graph.addVertex(i.first().getProtein());
             graph.addVertex(i.second().getProtein());
@@ -53,7 +71,19 @@ public class NetworkEntitiesToSubnetwork implements Transformer<Iterable<Network
         }
       }
     }
+    if(addNeighbors) {
+      for(Interaction i : ppin.getEdges()) {
+        Pair<Protein> e = ppin.getEndpoints(i);
+        boolean v1 = vertices.contains(e.getFirst());
+        boolean v2 = vertices.contains(e.getSecond());
+        if(!graph.containsEdge(i) && 
+                ((v1 && !v2) || (!v1 && v2))) {
+          graph.addVertex(e.getFirst());
+          graph.addVertex(e.getSecond());
+          graph.addEdge(i, e);
+        }
+      }
+    }
     return graph;
   }
-
 }

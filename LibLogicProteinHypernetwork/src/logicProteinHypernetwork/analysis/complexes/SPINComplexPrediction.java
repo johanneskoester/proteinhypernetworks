@@ -37,7 +37,7 @@ public abstract class SPINComplexPrediction extends Processor {
   private NetworkEntitiesToSubnetwork entitiesToSubgraph = new NetworkEntitiesToSubnetwork();
   protected Transformer<UndirectedGraph<Protein, Interaction>, Collection<Complex>> plainComplexPrediction;
   private ProteinHypernetwork hypernetwork;
-  private Collection<Complex> complexes = new Vector<Complex>(1000);
+  protected Collection<Complex> complexes = new Vector<Complex>(1000);
   private Collection<Complex> naiveComplexes = new Vector<Complex>(1000);
   private int threadCount;
   protected ProteinSubnetwork ppin;

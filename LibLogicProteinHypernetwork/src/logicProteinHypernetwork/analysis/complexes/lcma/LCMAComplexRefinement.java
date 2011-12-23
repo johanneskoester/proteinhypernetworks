@@ -7,6 +7,7 @@
 
 package logicProteinHypernetwork.analysis.complexes.lcma;
 
+import logicProteinHypernetwork.analysis.complexes.NetworkStateToSubnetwork;
 import logicProteinHypernetwork.analysis.complexes.ProteinSubnetwork;
 import logicProteinHypernetwork.analysis.complexes.SPINComplexPrediction;
 import logicProteinHypernetwork.analysis.complexes.SPINComplexRefinement;
@@ -26,6 +27,7 @@ public class LCMAComplexRefinement extends SPINComplexRefinement {
    */
   public LCMAComplexRefinement(ProteinSubnetwork ppin, SPINComplexPrediction complexPrediction) {
     super(ppin, complexPrediction);
+    networkStateToSubgraph = new NetworkStateToSubnetwork(ppin, true, false);
   }
 
   @Override

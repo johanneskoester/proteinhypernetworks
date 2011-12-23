@@ -7,6 +7,7 @@
 package logicProteinHypernetwork.analysis.complexes;
 
 import edu.uci.ics.jung.algorithms.filters.FilterUtils;
+import edu.uci.ics.jung.graph.util.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;

@@ -17,7 +17,17 @@ import org.apache.commons.collections15.Transformer;
  */
 public class NetworkStateToSubnetwork implements Transformer<NetworkState, ProteinSubnetwork> {
 
-  private NetworkEntitiesToSubnetwork networkEntitiesToSubgraph = new NetworkEntitiesToSubnetwork();
+  private NetworkEntitiesToSubnetwork networkEntitiesToSubgraph;
+
+  public NetworkStateToSubnetwork() {
+    networkEntitiesToSubgraph = new NetworkEntitiesToSubnetwork();
+  }
+  
+  public NetworkStateToSubnetwork(ProteinSubnetwork ppin, boolean noSelfInteractions,  boolean addNeighbors) {
+    networkEntitiesToSubgraph = new NetworkEntitiesToSubnetwork(ppin, noSelfInteractions, addNeighbors);
+  }
+  
+  
 
   /**
    * Returns protein subnetwork for a given network state.

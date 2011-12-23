@@ -35,6 +35,7 @@ public class LogicProteinHypernetwork {
   private Perturbations perturbations;
   private SPINComplexPrediction complexPrediction;
   private static Class<? extends SPINComplexPrediction> complexPredictionClass = LCMAComplexPrediction.class;
+  //private static Class<? extends SPINComplexPrediction> complexPredictionClass = MCODEComplexPrediction.class;
   private PISPrediction pisPrediction;
   private FunctionalSimilarityPrediction functionalSimilarityPrediction;
   private ProgressBean progressBean = new ProgressBean();
