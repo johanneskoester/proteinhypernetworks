@@ -11,6 +11,7 @@ import java.util.Collection;
 import logicProteinHypernetwork.Perturbations;
 import logicProteinHypernetwork.analysis.complexes.Complex;
 import logicProteinHypernetwork.analysis.complexes.ComplexFactory;
+import logicProteinHypernetwork.analysis.complexes.NetworkEntitiesToSubnetwork;
 import logicProteinHypernetwork.analysis.complexes.SPINComplexPrediction;
 import proteinHypernetwork.ProteinHypernetwork;
 import proteinHypernetwork.interactions.Interaction;
@@ -36,6 +37,7 @@ public class LCMAComplexPrediction extends SPINComplexPrediction {
   public LCMAComplexPrediction(ProteinHypernetwork hypernetwork, Perturbations perturbations, int threadCount) {
     super(hypernetwork, perturbations, threadCount);
     this.plainComplexPrediction = new FastLCMA<Protein, Interaction, Complex>(mergeSimilarityThreshold, new ComplexFactory());
+    this.entitiesToSubgraph = new NetworkEntitiesToSubnetwork(ppin, true, false);
   }
 
   /**

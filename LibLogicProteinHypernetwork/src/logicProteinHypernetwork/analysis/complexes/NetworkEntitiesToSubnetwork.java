@@ -22,7 +22,7 @@ import proteinHypernetwork.proteins.Protein;
 public class NetworkEntitiesToSubnetwork implements Transformer<Iterable<NetworkEntity>, ProteinSubnetwork> {
 
   private boolean noSelfInteractions;
-  private ProteinSubnetwork ppin;
+  protected ProteinSubnetwork ppin;
   private boolean addNeighbors;
 
   public NetworkEntitiesToSubnetwork() {
@@ -54,7 +54,7 @@ public class NetworkEntitiesToSubnetwork implements Transformer<Iterable<Network
    */
   public ProteinSubnetwork transform(Iterable<NetworkEntity> entities, Set<NetworkEntity> exclude) {
     ProteinSubnetwork graph = new ProteinSubnetwork();
-    Set<Protein> vertices = new HashSet<Protein>(graph.getVertices());
+    Set<Protein> vertices = new HashSet<Protein>();
     for (NetworkEntity e : entities) {
       if(e instanceof Protein) {
         vertices.add((Protein)e);

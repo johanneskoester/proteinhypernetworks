@@ -34,7 +34,7 @@ import proteinHypernetwork.proteins.Protein;
  */
 public abstract class SPINComplexPrediction extends Processor {
 
-  private NetworkEntitiesToSubnetwork entitiesToSubgraph = new NetworkEntitiesToSubnetwork();
+  protected NetworkEntitiesToSubnetwork entitiesToSubgraph = new NetworkEntitiesToSubnetwork();
   protected Transformer<UndirectedGraph<Protein, Interaction>, Collection<Complex>> plainComplexPrediction;
   private ProteinHypernetwork hypernetwork;
   protected Collection<Complex> complexes = new Vector<Complex>(1000);
@@ -159,7 +159,7 @@ public abstract class SPINComplexPrediction extends Processor {
   public void possibleEntities() {
     minimalNetworkStates.setPerturbation(perturbations.getPerturbations());
 
-    ppin = new NetworkEntitiesToSubnetwork().transform(minimalNetworkStates.getPossibleEntities());
+    ppin = entitiesToSubgraph.transform(minimalNetworkStates.getPossibleEntities());
   }
 
   /**
