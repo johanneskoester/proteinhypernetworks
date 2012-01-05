@@ -121,7 +121,7 @@ public class TasksView extends javax.swing.JPanel {
       complexesVisualization = new JungProteinComplexVisualization();
       complexesVisualization.setVisualizationSize(visSize);
       complexesVisualization.setProteinComplexes(Controller.getInstance().
-              getModalLogicHypernetwork().getProteinHypernetwork(),
+              getLogicHypernetwork().getProteinHypernetwork(),
               new ArrayList<Complex>((Controller.getInstance().getComplexes())));
     } else {
       complexesVisualization.setVisualizationSize(visSize);
@@ -136,7 +136,7 @@ public class TasksView extends javax.swing.JPanel {
     if (masterSwitchVisualization == null) {
       masterSwitchVisualization = new JungMasterSwitchesVisualization();
       masterSwitchVisualization.setVisualizationSize(visSize);
-      masterSwitchVisualization.setProteinHypernetwork(Controller.getInstance().getModalLogicHypernetwork());
+      masterSwitchVisualization.setProteinHypernetwork(Controller.getInstance().getLogicHypernetwork());
     } else {
       masterSwitchVisualization.setVisualizationSize(visSize);
     }

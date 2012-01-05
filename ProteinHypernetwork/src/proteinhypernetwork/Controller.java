@@ -49,7 +49,7 @@ public class Controller {
     return controller;
   }
   private ProteinHypernetwork hypernetwork;
-  private LogicProteinHypernetwork modalLogicHypernetwork;
+  private LogicProteinHypernetwork logicHypernetwork;
   private Task currentTask;
   private PropertyChangeSupport propChange = new PropertyChangeSupport(this);
   private File output;
@@ -59,16 +59,16 @@ public class Controller {
     this.output = output;
   }
 
-  public LogicProteinHypernetwork getModalLogicHypernetwork() {
-    return modalLogicHypernetwork;
+  public LogicProteinHypernetwork getLogicHypernetwork() {
+    return logicHypernetwork;
   }
 
   public void setMasterSwitchesDoSynthetic(boolean synthetic) {
-    modalLogicHypernetwork.setPISDoSynthetic(synthetic);
+    logicHypernetwork.setPISDoSynthetic(synthetic);
   }
 
   public void setMasterSwitchesDoInteractions(boolean interactions) {
-    modalLogicHypernetwork.setPISDoInteractions(interactions);
+    logicHypernetwork.setPISDoInteractions(interactions);
   }
 
   public void loadFrom(final File file) throws Exception {
@@ -76,7 +76,7 @@ public class Controller {
     hypernetwork = new ProteinHypernetwork();
 
     decoder.decode(file, hypernetwork);
-    modalLogicHypernetwork = new LogicProteinHypernetwork(hypernetwork, ((ProteinHypernetworkApp) Application.getInstance()).getThreadCount());
+    logicHypernetwork = new LogicProteinHypernetwork(hypernetwork, ((ProteinHypernetworkApp) Application.getInstance()).getThreadCount());
 
     propChange.firePropertyChange(LOADED, null, null);
   }
@@ -88,14 +88,16 @@ public class Controller {
   }
 
   public Collection<NetworkEntity> getPerturbedEntities() {
-    return modalLogicHypernetwork.getPerturbations();
+    return logicHypernetwork.getPerturbations();
   }
 
   public void predictComplexes() throws InstantiationException {
     LCMAComplexPrediction.setMergeSimilarityThreshold(ProteinHypernetworkApp.getApplication().getMergeSimilarityThreshold());
     
-    modalLogicHypernetwork.predictComplexes();
-    for (Complex c : modalLogicHypernetwork.getComplexes()) {
+    LogicProteinHypernetwork.setProteinComplexPrediction(ProteinHypernetworkApp.getApplication().getComplexPrediction());
+    
+    logicHypernetwork.predictComplexes();
+    for (Complex c : logicHypernetwork.getComplexes()) {
       Collections.sort(c);
     }
     propChange.firePropertyChange(COMPLEXESPREDICTED, null, null);
@@ -113,7 +115,7 @@ public class Controller {
   }
 
   public void predictMasterSwitches() {
-    modalLogicHypernetwork.predictPIS();
+    logicHypernetwork.predictPIS();
     propChange.firePropertyChange(MASTERSWITCHESPREDICTED, null, null);
   }
 
@@ -131,7 +133,7 @@ public class Controller {
   public void predictFunctionalSimilarities() throws FileNotFoundException, IOException {
     FileOutputStream fos = new FileOutputStream(output);
     FunctionalSimilarityOutputStream os = new FunctionalSimilarityOutputStream(fos);
-    modalLogicHypernetwork.predictFunctionalSimilarities(os);
+    logicHypernetwork.predictFunctionalSimilarities(os);
     fos.close();
     propChange.firePropertyChange(FUNCTIONALSIMILARITIESPREDICTED, null, null);
   }
@@ -148,19 +150,19 @@ public class Controller {
   }
 
   public void perturbation(final NetworkEntity e) {
-    modalLogicHypernetwork.perturbation(e);
+    logicHypernetwork.perturbation(e);
   }
 
   public void undoPerturbation(final NetworkEntity e) {
-    modalLogicHypernetwork.undoPerturbation(e);
+    logicHypernetwork.undoPerturbation(e);
   }
 
   public Collection<Complex> getComplexes() {
-    return modalLogicHypernetwork.getComplexes();
+    return logicHypernetwork.getComplexes();
   }
 
   public List<? extends PIS> getMasterSwitches() {
-    return modalLogicHypernetwork.getPIS();
+    return logicHypernetwork.getPIS();
   }
 
   public void exportComplexesToTsv() throws IOException {
@@ -221,7 +223,7 @@ public class Controller {
 
         @Override
         public void doInBackground(TaskEvent event) {
-          modalLogicHypernetwork.getProgressBean().addPropertyChangeListener(new PropertyChangeListener() {
+          logicHypernetwork.getProgressBean().addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
