@@ -33,16 +33,19 @@ public class MCL<V, E, C extends Collection<V>>  implements Transformer<Undirect
     SparseMatrix clusters = mcl.run(m, 1E-4, 2.1, 0, 1E-15);
     
     Set<C> complexes = new HashSet<C>();
+    boolean[] visited = new boolean[m.getVertexCount()];
     for(int i = 0; i < g.getVertexCount(); i++) {
-      complexes.add(getComplex(i, clusters, m));
+      if(!visited[i]) {
+        C c = getComplex(i, visited, clusters, m);
+        System.out.println(c);
+        complexes.add(c);
+      }
     }
     
     return complexes;
   }
   
-  private C getComplex(int i, SparseMatrix clusters, GraphMatrix<V,E> m) {
-    boolean[] visited = new boolean[m.getVertexCount()];
-    
+  private C getComplex(int i, boolean[] visited, SparseMatrix clusters, GraphMatrix<V,E> m) {
     Deque<Integer> todo = new ArrayDeque<Integer>();
     
     visited[i] = true;
