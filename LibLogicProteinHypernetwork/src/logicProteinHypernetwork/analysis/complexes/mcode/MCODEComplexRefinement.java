@@ -6,10 +6,13 @@ package logicProteinHypernetwork.analysis.complexes.mcode;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import logicProteinHypernetwork.analysis.complexes.Complex;
 import logicProteinHypernetwork.analysis.complexes.ProteinSubnetwork;
 import logicProteinHypernetwork.analysis.complexes.SPINComplexPrediction;
 import logicProteinHypernetwork.analysis.complexes.SPINComplexRefinement;
+import proteinHypernetwork.proteins.Protein;
 
 /**
  *
@@ -27,8 +30,10 @@ public class MCODEComplexRefinement extends SPINComplexRefinement {
     Collection<Complex> complexes = new ArrayList<Complex>();
     if(complex.size() > 30)
       return complexes;
+    
+    Set<Protein> proteins = new HashSet<Protein>(complex);
     for(Complex c : super.transform(complex)) {
-      if(c.size() <= 30)
+      if(proteins.containsAll(c))
         complexes.add(c);
     }
     return complexes;

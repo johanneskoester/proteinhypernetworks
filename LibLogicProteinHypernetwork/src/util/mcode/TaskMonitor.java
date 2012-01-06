@@ -10,6 +10,6 @@ package util.mcode;
  */
 public class TaskMonitor {
     public void setPercentCompleted(int percent) {
-        System.out.println(percent);
+        //System.out.println(percent);
     }
 }
