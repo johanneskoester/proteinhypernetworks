@@ -7,6 +7,7 @@ import java.io.File;
 import javax.swing.JFrame;
 import logicProteinHypernetwork.analysis.complexes.SPINComplexPrediction;
 import logicProteinHypernetwork.analysis.complexes.lcma.LCMAComplexPrediction;
+import logicProteinHypernetwork.analysis.complexes.mcl.MCLComplexPrediction;
 import logicProteinHypernetwork.analysis.complexes.mcode.MCODEComplexPrediction;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
@@ -163,6 +164,9 @@ public class ProteinHypernetworkApp extends SingleFrameApplication {
       }
       if (arg.equals("--mcode")) {
         setComplexPrediction(MCODEComplexPrediction.class);
+      }
+      if (arg.equals("--mcl")) {
+        setComplexPrediction(MCLComplexPrediction.class);
       }
     }
   }
