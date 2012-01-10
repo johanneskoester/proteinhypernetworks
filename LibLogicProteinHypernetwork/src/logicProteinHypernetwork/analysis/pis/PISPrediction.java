@@ -161,7 +161,7 @@ public class PISPrediction extends Processor {
 
     int score = 0;
     for (int d : dist.values()) {
-      score += d;
+      score += 1; // not d
     }
 
     p.setScore(score);

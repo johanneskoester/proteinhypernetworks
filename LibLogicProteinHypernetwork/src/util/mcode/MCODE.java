@@ -25,6 +25,7 @@ public class MCODE<V, E, C extends Collection<V>>  implements Transformer<Undire
     public Collection<C> transform(UndirectedGraph<V, E> g) {
         CyNetwork<V, E> network = new CyNetwork<V, E>(g);
         MCODEParameterSet p = new MCODEParameterSet();
+        //p.setMaxDepthFromStart(25);
         MCODECurrentParameters.getInstance().setParams(p, "params", "network");
         MCODEAlgorithm mcode = new MCODEAlgorithm(new TaskMonitor(), "network");
         

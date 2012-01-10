@@ -28,9 +28,9 @@ public class MCODEComplexRefinement extends SPINComplexRefinement {
 
   @Override
   public Collection<Complex> transform(Complex complex) {
-    Collection<Complex> complexes = new ArrayList<Complex>();
+    /*Collection<Complex> complexes = new ArrayList<Complex>();
     if(complex.size() > 30)
-      return complexes;
+      return complexes;*/
     
     /*Set<Protein> proteins = new HashSet<Protein>(complex);
     for(Complex c : super.transform(complex)) {
