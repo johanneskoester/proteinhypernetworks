@@ -7,10 +7,14 @@
 
 package proteinHypernetwork;
 
+import edu.uci.ics.jung.graph.UndirectedGraph;
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import java.util.Collection;
 import org.apache.commons.collections15.collection.CompositeCollection;
 import proteinHypernetwork.constraints.Constraints;
+import proteinHypernetwork.interactions.Interaction;
 import proteinHypernetwork.interactions.Interactions;
+import proteinHypernetwork.proteins.Protein;
 import proteinHypernetwork.proteins.Proteins;
 
 /**
@@ -75,5 +79,21 @@ public class ProteinHypernetwork {
    */
   public Collection<NetworkEntity> getNetworkEntities() {
     return networkEntities;
+  }
+  
+  /**
+   * Returns a graph for the whole protein network.
+   * 
+   * @return a graph for the whole protein network
+   */
+  public UndirectedGraph<Protein, Interaction> networkGraph() {
+    UndirectedGraph<Protein, Interaction> graph = new UndirectedSparseGraph<Protein, Interaction>();
+    for(Protein p : proteins) {
+      graph.addVertex(p);
+    }
+    for(Interaction i : interactions) {
+      graph.addEdge(i, i.getProteins());
+    }
+    return graph;
   }
 }

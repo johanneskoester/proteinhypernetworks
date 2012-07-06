@@ -38,6 +38,19 @@ public class Interaction extends AbstractListenable implements Iterable<Interact
   public Pair<Protein> getProteins() {
     return new Pair<Protein>(first().getProtein(), second().getProtein());
   }
+  
+  /**
+   * Returns the other protein for a given protein.
+   * 
+   * @param p a protein
+   * @return the other protein
+   */
+  public Protein getOtherProtein(Protein p) {
+    Pair<Protein> pp = getProteins();
+    if(pp.getFirst() == p)
+      return pp.getSecond();
+    return pp.getFirst();
+  }
 
   /**
    * Add an interactor.
