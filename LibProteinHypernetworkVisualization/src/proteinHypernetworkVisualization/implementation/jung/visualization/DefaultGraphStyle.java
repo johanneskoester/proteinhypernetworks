@@ -27,8 +27,16 @@ import org.apache.commons.collections15.Transformer;
  * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
 public class DefaultGraphStyle {
+  
+  protected Color getDefaultVertexColor(Object vertex, final VisualizationViewer vv) {
+    return Color.RED;
+  }
+  
+  protected Color getDefaultEdgeColor(Object edge, final VisualizationViewer vv) {
+    return vv.getBackground().darker();
+  }
 
-  private static Transformer<Object, Shape> vertexShapeTransformer = new Transformer<Object, Shape>() {
+  private Transformer<Object, Shape> vertexShapeTransformer = new Transformer<Object, Shape>() {
 
     private VertexShapeFactory vsf = new VertexShapeFactory(new Transformer<Object, Integer>() {
 
@@ -47,17 +55,17 @@ public class DefaultGraphStyle {
     }
   };
 
-  public static Transformer<Object, Shape> getVertexShapeTransformer() {
+  public Transformer<Object, Shape> getVertexShapeTransformer() {
     return vertexShapeTransformer;
   }
 
-  public static void setGraphStyle(final VisualizationViewer vv, boolean labelVertices) {
+  public void setGraphStyle(final VisualizationViewer vv, boolean labelVertices) {
     vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
     vv.getRenderContext().setVertexShapeTransformer(getVertexShapeTransformer());
     vv.getRenderContext().setVertexFillPaintTransformer(new Transformer<Object, Paint>() {
 
       public Paint transform(Object v) {
-        Color c = Color.RED;//vv.getBackground().darker();
+        Color c = getDefaultVertexColor(v, vv);
         if (vv.getPickedVertexState().isPicked(v)) {
           c = Color.WHITE;//c.brighter();
         }
@@ -70,7 +78,7 @@ public class DefaultGraphStyle {
         if (vv.getPickedVertexState().isPicked(v)) {
           return makeTransparent(Color.WHITE);
         }
-        return makeTransparent(Color.RED);
+        return makeTransparent(getDefaultVertexColor(v, vv));
       }
     });
     vv.getRenderContext().setVertexStrokeTransformer(new Transformer<Object, Stroke>() {
@@ -87,7 +95,7 @@ public class DefaultGraphStyle {
           if(vv.getPickedVertexState().isPicked(v))
             return makeTransparent(Color.RED);
         }
-        return makeTransparent(vv.getBackground().darker());//vv.getBackground().darker();
+        return makeTransparent(getDefaultEdgeColor(e, vv));
       }
     });
     vv.getRenderContext().setEdgeStrokeTransformer(new Transformer<Object, Stroke>() {
@@ -107,7 +115,7 @@ public class DefaultGraphStyle {
     //vv.setVertexToolTipTransformer(new ToStringLabeller());
   }
 
-  public static void labelVertices(final VisualizationViewer vv, boolean label) {
+  public void labelVertices(final VisualizationViewer vv, boolean label) {
     if (!label) {
       vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.GRAY.darker()) {
 

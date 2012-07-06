@@ -126,7 +126,7 @@ public class JungMasterSwitchesVisualization extends javax.swing.JPanel implemen
     vv = new VisualizationViewer(l, size);
     currentVisualization = vv;
     vv.setDoubleBuffered(true);
-    DefaultGraphStyle.setGraphStyle(vv, true);
+    new DefaultGraphStyle().setGraphStyle(vv, true);
     vv.setGraphMouse(graphMouse);
 
     vv.getRenderContext().setVertexShapeTransformer(new MasterSwitchShapeTransformer());
@@ -253,7 +253,7 @@ public class JungMasterSwitchesVisualization extends javax.swing.JPanel implemen
   }//GEN-LAST:event_selectButtonActionPerformed
 
   private void labelVerticesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelVerticesActionPerformed
-    DefaultGraphStyle.labelVertices(vv, labelVertices.isSelected());
+    new DefaultGraphStyle().labelVertices(vv, labelVertices.isSelected());
   }//GEN-LAST:event_labelVerticesActionPerformed
 
   private void showCytoscapeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showCytoscapeActionPerformed

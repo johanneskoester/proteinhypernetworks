@@ -80,14 +80,14 @@ public class JungProteinNetworkVisualization extends javax.swing.JPanel {
     System.out.println(i);
     }*/
 
-    DefaultGraphStyle.setGraphStyle(vv, true);
+    new DefaultGraphStyle().setGraphStyle(vv, true);
     vv.setGraphMouse(graphMouse);
 
     graph.add(new GraphZoomScrollPane(vv));
   }
 
   public void resetHighlighting() {
-    DefaultGraphStyle.setGraphStyle(vv, true);
+    new DefaultGraphStyle().setGraphStyle(vv, true);
   }
 
   public void highlightNetworkEntities(final HashSet<NetworkEntity> networkEntities) {
@@ -196,7 +196,7 @@ public class JungProteinNetworkVisualization extends javax.swing.JPanel {
     }//GEN-LAST:event_selectButtonActionPerformed
 
     private void labelVerticesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelVerticesActionPerformed
-      DefaultGraphStyle.labelVertices(vv, labelVertices.isSelected());
+      new DefaultGraphStyle().labelVertices(vv, labelVertices.isSelected());
       vv.repaint();
     }//GEN-LAST:event_labelVerticesActionPerformed
 
