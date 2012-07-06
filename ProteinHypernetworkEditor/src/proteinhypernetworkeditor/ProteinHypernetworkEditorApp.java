@@ -95,7 +95,6 @@ public class ProteinHypernetworkEditorApp extends SingleFrameApplication {
       else if(arg.startsWith("--importConstraints=")) {
         importConstraints = arg.substring(20);
       }
-
     }
   }
 
