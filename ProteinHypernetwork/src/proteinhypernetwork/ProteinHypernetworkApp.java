@@ -26,6 +26,7 @@ public class ProteinHypernetworkApp extends SingleFrameApplication {
   private boolean masterSwitches = false;
   private boolean synthetic = false;
   private boolean complexes = false;
+  private String[] reactions = null;
   private boolean help = false;
   private Class<? extends SPINComplexPrediction> complexPrediction = LCMAComplexPrediction.class;
 
@@ -86,7 +87,7 @@ public class ProteinHypernetworkApp extends SingleFrameApplication {
       show(new ProteinHypernetworkView(this));
     } else {
       System.setProperty("java.awt.headless", "true");
-      if (!masterSwitches && !complexes) {
+      if (!masterSwitches && !complexes && reactions == null) {
         displayHelp();
         return;
       }
@@ -96,19 +97,24 @@ public class ProteinHypernetworkApp extends SingleFrameApplication {
 
         Controller.getInstance().setOutput(new File(output));
 
-        if (masterSwitches) {
+        if(reactions != null) {
+          Controller.getInstance().predictReactions(reactions);
+          Controller.getInstance().exportReactionsToSBML();
+        }
+        else if (masterSwitches) {
           if(synthetic)
             Controller.getInstance().setMasterSwitchesDoSynthetic(true);
 
           Controller.getInstance().predictMasterSwitches();
 
           Controller.getInstance().exportMasterSwitchesToTsv();
-        } else {
+        } else if (complexes) {
           Controller.getInstance().predictComplexes();
           Controller.getInstance().exportComplexesToTsv();
         }
 
       } catch (Exception ex) {
+        ex.printStackTrace();
         System.err.println(ex);
       }
     }
@@ -167,6 +173,9 @@ public class ProteinHypernetworkApp extends SingleFrameApplication {
       }
       if (arg.equals("--mcl")) {
         setComplexPrediction(MCLComplexPrediction.class);
+      }
+      if (arg.startsWith("--reactions=")) {
+        reactions = arg.substring(12).split(",");
       }
     }
   }

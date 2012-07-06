@@ -20,11 +20,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import javax.xml.stream.XMLStreamException;
 import logicProteinHypernetwork.LogicProteinHypernetwork;
 import logicProteinHypernetwork.analysis.complexes.Complex;
 import logicProteinHypernetwork.analysis.complexes.lcma.LCMAComplexPrediction;
 import logicProteinHypernetwork.analysis.functionalSimilarity.FunctionalSimilarityOutputStream;
 import logicProteinHypernetwork.analysis.pis.PIS;
+import logicProteinHypernetwork.analysis.reactions.Reaction;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.TaskEvent;
 import org.jdesktop.application.TaskListener;
@@ -42,6 +44,7 @@ public class Controller {
   public static String COMPLEXESPREDICTED = "complexespredicted";
   public static String MASTERSWITCHESPREDICTED = "masterswitchespredicted";
   public static String FUNCTIONALSIMILARITIESPREDICTED = "functionalsimilaritiespredicted";
+  public static String REACTIONSPREDICTED = "reactionspredicted";
   public static String LOADED = "loaded";
   private static Controller controller = new Controller();
 
@@ -93,9 +96,9 @@ public class Controller {
 
   public void predictComplexes() throws InstantiationException {
     LCMAComplexPrediction.setMergeSimilarityThreshold(ProteinHypernetworkApp.getApplication().getMergeSimilarityThreshold());
-    
+
     LogicProteinHypernetwork.setProteinComplexPrediction(ProteinHypernetworkApp.getApplication().getComplexPrediction());
-    
+
     logicHypernetwork.predictComplexes();
     for (Complex c : logicHypernetwork.getComplexes()) {
       Collections.sort(c);
@@ -149,6 +152,15 @@ public class Controller {
     });
   }
 
+  public void predictReactions(String[] proteins) {
+    Collection<Protein> prots = new ArrayList<Protein>();
+    for (String p : proteins) {
+      prots.add(hypernetwork.getProteins().getProteinById(p));
+    }
+    logicHypernetwork.predictReactions(prots);
+    propChange.firePropertyChange(REACTIONSPREDICTED, null, null);
+  }
+
   public void perturbation(final NetworkEntity e) {
     logicHypernetwork.perturbation(e);
   }
@@ -165,6 +177,10 @@ public class Controller {
     return logicHypernetwork.getPIS();
   }
 
+  public List<Reaction> getReactions() {
+    return logicHypernetwork.getReactions();
+  }
+
   public void exportComplexesToTsv() throws IOException {
     List<Complex> complexes = new ArrayList<Complex>(getComplexes());
     Collections.sort(complexes, Collections.reverseOrder());
@@ -177,12 +193,17 @@ public class Controller {
     List<PIS> masterSwitches = new ArrayList<PIS>(getMasterSwitches());
     Collections.sort(masterSwitches, Collections.reverseOrder());
     for (PIS m : masterSwitches) {
-      for(NetworkEntity e : m)
+      for (NetworkEntity e : m) {
         out.write(e.toString() + "\t");
+      }
       out.write(m.getScore() + "\n");
     }
 
     out.close();
+  }
+
+  public void exportReactionsToSBML() throws XMLStreamException, FileNotFoundException {
+    Reaction.writeSBML(getReactions(), output);
   }
 
   public void addPropertyChangeListener(PropertyChangeListener p) {
