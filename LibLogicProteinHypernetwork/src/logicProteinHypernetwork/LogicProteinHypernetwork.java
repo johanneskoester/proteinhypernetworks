@@ -19,8 +19,11 @@ import logicProteinHypernetwork.analysis.pis.PIS;
 import logicProteinHypernetwork.analysis.pis.PISPrediction;
 import logicProteinHypernetwork.analysis.pis.SinglePIS;
 import logicProteinHypernetwork.analysis.pis.SyntheticPISPrediction;
+import logicProteinHypernetwork.analysis.reactions.Reaction;
+import logicProteinHypernetwork.analysis.reactions.ReactionsPrediction;
 import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.ProteinHypernetwork;
+import proteinHypernetwork.proteins.Protein;
 import util.ProgressBean;
 
 /**
@@ -37,6 +40,7 @@ public class LogicProteinHypernetwork {
   private static Class<? extends SPINComplexPrediction> complexPredictionClass = LCMAComplexPrediction.class;
   private PISPrediction pisPrediction;
   private FunctionalSimilarityPrediction functionalSimilarityPrediction;
+  private ReactionsPrediction reactionsPrediction;
   private ProgressBean progressBean = new ProgressBean();
   private int threadCount;
   private boolean pisDoSynthetic;
@@ -160,6 +164,17 @@ public class LogicProteinHypernetwork {
     functionalSimilarityPrediction.setOutputStream(os);
     functionalSimilarityPrediction.getProgressBean().addPropertyChangeListener(progressBean);
     functionalSimilarityPrediction.process();
+  }
+  
+  public void predictReactions(Collection<Protein> proteins) {
+    reactionsPrediction = new ReactionsPrediction(proteinHypernetwork, 5, 100);
+    reactionsPrediction.setProteins(proteins);
+    reactionsPrediction.getProgressBean().addPropertyChangeListener(progressBean);
+    reactionsPrediction.process();
+  }
+  
+  public List<Reaction> getReactions() {
+    return reactionsPrediction.getReactions();
   }
 
   /**
