@@ -91,28 +91,28 @@ public class ReactionsPrediction extends Processor {
     int oldsize = 0;
     int oldoldsize = 0;
     for (int i = 0; i < depth; i++) {
+      System.out.println(i);
       oldoldsize = oldsize;
       oldsize = reactions.size();
       List<Reaction> rs = new ArrayList<Reaction>(reactions);
-      for (int k = 0; k< rs.size(); k++) {
+      for (int k = 0; k < rs.size(); k++) {
         for (int l = Math.max(k, oldoldsize); l < rs.size(); l++) {
           //System.out.println(rs.get(k).product);
           //System.out.println(rs.get(l).product);
           enumerateReactions(rs.get(k).product, rs.get(l).product, reactions, maxreactions);
-          if(reactions.size() == maxreactions)
+          if (reactions.size() == maxreactions) {
             return;
+          }
         }
       }
-      System.out.println(i);
       System.out.println("Reactions: " + reactions.size());
       progressBean.setProgress(i, depth);
-      if(reactions.size() != oldsize)
-        return;
-      if (i >= depth - 1) {
-        System.out.println("Stopping because maximum depth is reached.");
+      if (reactions.size() == oldsize) {
+        System.out.println("No new reactions, stopping.");
         return;
       }
     }
+    System.out.println("Stopping because maximum depth is reached.");
   }
 
   /**
@@ -125,29 +125,37 @@ public class ReactionsPrediction extends Processor {
   private void enumerateReactions(ComplexMultigraph a, ComplexMultigraph b, Collection<Reaction> reactions, int maxreactions) {
     for (Protein p : a) {
       for (Protein q : b) {
+        //System.out.println(a + " " + b);
         if (network.isNeighbor(p, q)) {
           for (Interaction i : network.getOutEdges(p)) {
             if (i.contains(q)) {
               // a candidate reaction
               for (MinimalNetworkState m : minimalNetworkStates.getMinimalNetworkStates(i)) {
-                System.out.println(i + "" + m);
+                //System.out.println(i + "" + m);
                 for (int vertexa : a.getVertices(p)) {
                   for (int vertexb : b.getVertices(q)) {
-                    ComplexMultigraph product = new ComplexMultigraph(a);
+                    if (!a.isEdge(vertexa, q) && !b.isEdge(vertexb, p)) {
+                      ComplexMultigraph product = new ComplexMultigraph(a);
 
-                    try {
-                      product.subtract(m, vertexa);
-                      // a valid product candidate if no exception
-                      product.merge(vertexa, i, vertexb, b);
-                      Reaction r = new Reaction(a, b, product);
-                      System.out.println(r);
-                      reactions.add(r);
-                      if(reactions.size() == maxreactions) {
-                        System.out.println("Stopping because maximum number of reactions is exceeded.");
-                        return;
+                      try {
+                        product.update(m, vertexa);
+
+                        // a valid product candidate if no exception
+                        product.merge(vertexa, i, vertexb, b);
+                        Reaction r = new Reaction(a, b, product);
+                        System.out.println(r);
+                        reactions.add(r);
+                        if (reactions.size() == maxreactions) {
+                          System.out.println("Stopping because maximum number of reactions is exceeded.");
+                          return;
+                        }
+                      } catch (ComplexMultigraph.NotConnectedException e) {
+                        System.out.println("Not connected: " + a + " and " + b);
+                        // ignore this complex
+                      } catch (ComplexMultigraph.MissingEntityException e) {
+                        System.out.println("Missing Entity: " + a + " and " + b);
+                        // ignore this complex
                       }
-                    } catch (ComplexMultigraph.NotConnectedException e) {
-                      // ignore this complex
                     }
                   }
                 }

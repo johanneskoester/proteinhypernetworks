@@ -113,8 +113,16 @@ public class ComplexMultigraph extends UndirectedSparseGraph<Integer, Integer> i
   public boolean isConnected() {
     return bfs().size() == getVertexCount();
   }
+  
+  public boolean isEdge(int a, Protein b) {
+    for(int p : getNeighbors(a)) {
+      if(verticesToProteins.get(p) == b)
+        return true;
+    }
+    return false;
+  }
 
-  public void subtract(MinimalNetworkState m, int vertex) throws NotConnectedException {
+  public void update(MinimalNetworkState m, int vertex) throws NotConnectedException, MissingEntityException {
     Set<Interaction> impossible = new HashSet<Interaction>();
 
     for (NetworkEntity entity : m.getImpossible()) {
@@ -125,6 +133,21 @@ public class ComplexMultigraph extends UndirectedSparseGraph<Integer, Integer> i
         }
       } else if (entity instanceof Interaction) {
         impossible.add((Interaction) entity);
+      }
+    }
+    
+    for(NetworkEntity entity : m.getNecessary()) {
+      if(entity instanceof Protein) {
+        // TODO find out what to do here
+      } else if (entity instanceof Interaction) {
+        Interaction i = (Interaction)entity;
+        boolean found = false;
+        for(int edge : getOutEdges(vertex)) {
+          if(edgesToInteractions.get(edge) == i)
+            found = true;
+        }
+        if(!found)
+          throw new MissingEntityException();
       }
     }
 
