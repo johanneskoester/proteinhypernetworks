@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="dist/lib/collections-generic-4.01.jar"/>
+	<classpathentry kind="lib" path="dist/lib/jung-algorithms-2.0.1.jar"/>
+	<classpathentry kind="lib" path="dist/lib/jung-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="dist/lib/jung-graph-impl-2.0.1.jar"/>
+	<classpathentry kind="lib" path="dist/lib/Knowceans.jar"/>
+	<classpathentry kind="lib" path="dist/lib/LibModalLogic.jar"/>
+	<classpathentry kind="lib" path="dist/lib/LibProteinHypernetwork.jar"/>
+	<classpathentry kind="lib" path="dist/LibLogicProteinHypernetwork.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
