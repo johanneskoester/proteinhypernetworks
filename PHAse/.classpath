@@ -2,5 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/lib/commons-cli-1.2/commons-cli-1.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/LibLogicProteinHypernetwork"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/LibModalLogic"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/LibProteinHypernetwork"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
