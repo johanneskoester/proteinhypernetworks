@@ -32,17 +32,18 @@ public class CLI {
 
 	public static void main(String[] args) {
 		CommandLineParser parser = new PosixParser();
+		HelpFormatter help = new HelpFormatter();
 		Options options = new Options();
 		options.addOption("h", "help", false, "Print this message.");
 		options.addOption("t", "threads", false,
 				"Number of threads to use (1 per default).");
 		options.addOption("c", "complexes", false, "Predict protein complexes.");
 		options.addOption("p", "pis", false, "Predict perturbation impact.");
-		// automatically generate the help statement
-		HelpFormatter help = new HelpFormatter();
+		options.addOption("s", "similarity", false, "Predict functional similarities.");
 
 		String input = null;
 		String output = null;
+
 		CommandLine line = null;
 		try {
 			line = parser.parse(options, args);
@@ -64,7 +65,6 @@ public class CLI {
 			return;
 		}
 
-		File infile = new File(input);
 		BufferedWriter outstream = null;
 		if (output.equals("-")) {
 			outstream = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -73,8 +73,9 @@ public class CLI {
 		Controller.getInstance().setThreads(
 				Integer.valueOf(line.getOptionValue("threads", "1")));
 
+		File inputFile = new File(input);
 		try {
-			Controller.getInstance().loadHypernetwork(infile);
+			Controller.getInstance().loadHypernetwork(inputFile);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,28 +84,19 @@ public class CLI {
 			e.printStackTrace();
 		}
 
-		if (line.hasOption("complexes")) {
-			Controller.getInstance().predictComplexes();
-			try {
-				for (Complex c : Controller.getInstance().getComplexes()) {
-					outstream.append(c.toString());
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try {
+			if (line.hasOption("complexes")) {
+				Controller.getInstance().predictComplexes(outstream);
 			}
-		}
-		if (line.hasOption("pis")) {
-			Controller.getInstance().predictPIS();
-			try {
-				for(PIS pis : Controller.getInstance().getPIS()) {
-					outstream.append(pis.toString());
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			else if (line.hasOption("pis")) {
+				Controller.getInstance().predictPIS(outstream);
 			}
+			else if (line.hasOption("similarity")) {
+				Controller.getInstance().predictFunctionalSimilarities(outstream);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 	}
 }

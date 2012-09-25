@@ -5,16 +5,17 @@
  * for a description.
  */
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Collection;
+import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
 import logicProteinHypernetwork.LogicProteinHypernetwork;
 import logicProteinHypernetwork.analysis.complexes.Complex;
+import logicProteinHypernetwork.analysis.functionalSimilarity.FunctionalSimilarityOutputStream;
 import logicProteinHypernetwork.analysis.pis.PIS;
 import proteinHypernetwork.ProteinHypernetwork;
 import proteinHypernetwork.decoder.HypernetworkMLDecoder;
@@ -50,26 +51,27 @@ public class Controller {
 		logicHypernetwork = new LogicProteinHypernetwork(hypernetwork, threads);
 	}
 
-	public void predictComplexes() {
+	public void predictComplexes(BufferedWriter writer) throws IOException {
 		try {
 			logicHypernetwork.predictComplexes();
 			for (Complex c : logicHypernetwork.getComplexes()) {
 				Collections.sort(c);
+				writer.append(c.toString());
 			}
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void predictPIS() {
+	public void predictPIS(BufferedWriter writer) throws IOException {
 		logicHypernetwork.predictPIS();
+		for (PIS pis : logicHypernetwork.getPIS()) {
+			writer.append(pis.toString());
+		}
 	}
 	
-	public Collection<Complex> getComplexes() {
-		return logicHypernetwork.getComplexes();
-	}
-	
-	public List<? extends PIS> getPIS() {
-		return logicHypernetwork.getPIS();
+	public void predictFunctionalSimilarities(BufferedWriter writer) throws IOException {
+		FunctionalSimilarityOutputStream os = new FunctionalSimilarityOutputStream(writer);
+		logicHypernetwork.predictFunctionalSimilarities(os);
 	}
 }
