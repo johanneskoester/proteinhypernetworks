@@ -8,6 +8,7 @@
 package proteinHypernetwork.decoder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -27,7 +28,7 @@ import proteinHypernetwork.proteins.Protein;
 public class SifDecoder implements Decoder {
 
   @Override
-  public void decode(File file, ProteinHypernetwork proteinHypernetwork) throws Exception {
+  public void decode(File file, ProteinHypernetwork proteinHypernetwork) throws FileNotFoundException {
     Map<String, Protein> proteins = new HashMap<String, Protein>();
     Set<Interaction> interactions = new TreeSet<Interaction>();
 

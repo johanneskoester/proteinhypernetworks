@@ -7,8 +7,8 @@
 
 package logicProteinHypernetwork.analysis.functionalSimilarity;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 
 
 /**
@@ -17,14 +17,14 @@ import java.io.OutputStream;
  * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
 public class FunctionalSimilarityOutputStream {
-  private OutputStream os;
+  private BufferedWriter os;
 
   /**
    * Constructor of class FunctionalSimilarityOutputStream.
    * 
    * @param os the output stream
    */
-  public FunctionalSimilarityOutputStream(OutputStream os) {
+  public FunctionalSimilarityOutputStream(BufferedWriter os) {
     this.os = os;
   }
 
@@ -35,7 +35,7 @@ public class FunctionalSimilarityOutputStream {
    * @throws IOException if writing fails
    */
   public void write(FunctionalSimilarity fs) throws IOException {
-    os.write(fs.toString().getBytes());
-    os.write("\n".getBytes());
+    os.append(fs.toString());
+    os.append("\n");
   }
 }
