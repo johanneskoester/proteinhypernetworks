@@ -389,6 +389,16 @@ public class TruthTablePrediction {
 				table.put(line,(table.get(line)+1));
 			}
 		}
+		
+		// TODO Alternative implementation that does not produce artifacts for 3-interaction cases
+		/*table = new HashMap<String, Integer>();
+		for(Proteincomplex complex : complexList) {
+			
+		}*/
+		
+		
+		// end
+		
 		header = header + "observed-"+numberOfObservations;		
 		try { // Writing the table into a file
 			FileWriter fstream = new FileWriter(path);
