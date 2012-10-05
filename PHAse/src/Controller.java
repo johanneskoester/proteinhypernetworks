@@ -19,6 +19,7 @@ import logicProteinHypernetwork.analysis.functionalSimilarity.FunctionalSimilari
 import logicProteinHypernetwork.analysis.pis.PIS;
 import proteinHypernetwork.ProteinHypernetwork;
 import proteinHypernetwork.decoder.HypernetworkMLDecoder;
+import reconstructionOfInteractionDependencies.TruthTablePrediction;
 
 /**
 *
@@ -73,5 +74,11 @@ public class Controller {
 	public void predictFunctionalSimilarities(BufferedWriter writer) throws IOException {
 		FunctionalSimilarityOutputStream os = new FunctionalSimilarityOutputStream(writer);
 		logicHypernetwork.predictFunctionalSimilarities(os);
+	}
+	
+	public void predictTruthTables(String network, String complexes, String destination) {
+		TruthTablePrediction ttp = new TruthTablePrediction(complexes, network, 2);
+		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination, 10, 1);
+		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination, 10, 1);
 	}
 }
