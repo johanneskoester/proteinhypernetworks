@@ -35,6 +35,8 @@ public class TruthTablePrediction {
 	private ArrayList<Proteincomplex> complexes;
 	private HashMap<String, Protein> proteins;
 
+	int tableCounter = 0;
+
 	/** Truth-values are the absolute numbers of observations */
 	final static int absoluteModus = 1;
 	/**
@@ -125,8 +127,7 @@ public class TruthTablePrediction {
 					id = j;
 					tempComplex = new Proteincomplex(id);
 				}
-				tokenizer.nextToken(); // ignore the 2nd token
-				// 3rd token is the proteinname
+				// 2nd token is the proteinname
 				proteinName = tokenizer.nextToken();
 				proteinName = proteinName.toUpperCase();
 				if (proteins.get(proteinName) != null) {
@@ -149,11 +150,11 @@ public class TruthTablePrediction {
 			System.out
 					.println("File not found! Please check spelling and path of the file.");
 			e.printStackTrace();
-			System.exit(-1);
+			System.exit(1);
 		} catch (IOException e) {
 			System.out.println("Error while reading the file.");
 			e.printStackTrace();
-			System.exit(-1);
+			System.exit(1);
 		}
 	}
 
@@ -201,61 +202,19 @@ public class TruthTablePrediction {
 			while ((line = reader.readLine()) != null) {
 				int i = 0;
 				StringTokenizer tokenizer = new StringTokenizer(line, "\t");
-				while (tokenizer.hasMoreTokens() && i < 5) {
-					tokenizer.nextToken();
-					i++;
-				}
-				// Columns 6 - 9 contain the names
-				proteinNameA = tokenizer.nextToken().toUpperCase(); // Column 6
+				// Columns 1 and 2 contain the names
+				proteinNameA = tokenizer.nextToken().toUpperCase(); // Column 1
 				if (proteins.get(proteinNameA) != null) {
 					tempProteinA = proteins.get(proteinNameA);
 					proteinNameB = tokenizer.nextToken().toUpperCase(); // column
-																		// 7
+																		// 2
 					tempProteinB = proteins.get(proteinNameB);
-					if (tempProteinB != null
-							&& !tempProteinA.interactsWithProtein(tempProteinB)) {
-						for (int j = 7; j < 12; j++) {
-							tokenizer.nextToken();
-						}// column 13 contains Experimental System Type -> must
-							// be "physical"
-						if (tokenizer.nextToken().equalsIgnoreCase("physical")) {
-							tempProteinA.addInteraction(tempProteinB);
-							// if a protein interacts with itself we only have
-							// to add it once to the interactions-list
-							if (!tempProteinA.equals(tempProteinB)) {
-								tempProteinB.addInteraction(tempProteinA);
-							}
-							// System.out.println(proteinNameA + " - " +
-							// proteinNameB);
-						}
-					}
-				} else {
-					tokenizer.nextToken();
-					proteinNameA = tokenizer.nextToken().toUpperCase(); // column
-																		// 8
-					if (proteins.get(proteinNameA) != null) {
-						tempProteinA = proteins.get(proteinNameA);
-						proteinNameB = tokenizer.nextToken().toUpperCase(); // column
-																			// 9
-						tempProteinB = proteins.get(proteinNameB);
-						if (tempProteinB != null
-								&& !tempProteinA
-										.interactsWithProtein(tempProteinB)) {
-							for (int j = 9; j < 12; j++) {
-								tokenizer.nextToken();
-							}// column 13 contains Experimental System Type ->
-								// must be "physical"
-							if (tokenizer.nextToken().equalsIgnoreCase(
-									"physical")) {
-								tempProteinA.addInteraction(tempProteinB);
-								// if a Protein interacts with itself we only
-								// have to add it once to the interactions-list
-								if (!tempProteinA.equals(tempProteinB)) {
-									tempProteinB.addInteraction(tempProteinA);
-								}
-								// System.out.println(proteinNameA + " - " +
-								// proteinNameB);
-							}
+					if (tempProteinB != null) {
+						tempProteinA.addInteraction(tempProteinB);
+						// if a protein interacts with itself we only have
+						// to add it once to the interactions-list
+						if (!tempProteinA.equals(tempProteinB)) {
+							tempProteinB.addInteraction(tempProteinA);
 						}
 					}
 				}
@@ -289,7 +248,6 @@ public class TruthTablePrediction {
 			String pathDestination, int threshold, int modus) {
 		Collection<Protein> p = proteins.values();
 		Iterator<Protein> iterator = p.iterator();
-		int tableCounter = 0;
 		while (iterator.hasNext()) {
 			Protein p1 = (Protein) iterator.next();
 			Protein p2 = null;
@@ -334,7 +292,6 @@ public class TruthTablePrediction {
 			String pathDestination, int threshold, int modus) {
 		Collection<Protein> p = proteins.values();
 		Iterator<Protein> iterator = p.iterator();
-		int tableCounter = 0;
 		while (iterator.hasNext()) {
 			Protein p1 = (Protein) iterator.next();
 			Protein p2 = null;
@@ -428,47 +385,28 @@ public class TruthTablePrediction {
 			numberOfVariables++;
 		}
 
-		/*Map<String, Integer> table = new HashMap<String, Integer>();
-		for (int i = 0; i < complexList.size(); i++) {
-			line = ""; // Each complex provides a line in the table depending on
-						// which proteins it contains
-			Proteincomplex actualComplex = complexList.get(i);
-			if (p1p2) {
-				if (actualComplex.contains2Proteins(p1, p2)) {
-					line = line + "1 ";
-				} else {
-					line = line + "0 ";
-				}
-			}
-			if (p2p3) {
-				if (actualComplex.contains2Proteins(p2, p3)) {
-					line = line + "1 ";
-				} else {
-					line = line + "0 ";
-				}
-			}
-			if (p3p1) {
-				if (actualComplex.contains2Proteins(p3, p1)) {
-					line = line + "1 ";
-				} else {
-					line = line + "0 ";
-				}
-			}// here we count the occurrences of each line
-			if (line.equals("0 ") || line.equals("0 0 ")
-					|| line.equals("0 0 0 ")) {
-				numberOfObservations--;
-			} else if (table.get(line) == null) {
-				table.put(line, 1);
-			} else {
-				table.put(line, (table.get(line) + 1));
-			}
-		}*/
+		/*
+		 * Map<String, Integer> table = new HashMap<String, Integer>(); for (int
+		 * i = 0; i < complexList.size(); i++) { line = ""; // Each complex
+		 * provides a line in the table depending on // which proteins it
+		 * contains Proteincomplex actualComplex = complexList.get(i); if (p1p2)
+		 * { if (actualComplex.contains2Proteins(p1, p2)) { line = line + "1 ";
+		 * } else { line = line + "0 "; } } if (p2p3) { if
+		 * (actualComplex.contains2Proteins(p2, p3)) { line = line + "1 "; }
+		 * else { line = line + "0 "; } } if (p3p1) { if
+		 * (actualComplex.contains2Proteins(p3, p1)) { line = line + "1 "; }
+		 * else { line = line + "0 "; } }// here we count the occurrences of
+		 * each line if (line.equals("0 ") || line.equals("0 0 ") ||
+		 * line.equals("0 0 0 ")) { numberOfObservations--; } else if
+		 * (table.get(line) == null) { table.put(line, 1); } else {
+		 * table.put(line, (table.get(line) + 1)); } }
+		 */
 
 		// Alternative implementation that does not produce artifacts for
 		// 3-interaction cases
 		Counter<String> counts = new Counter<String>();
 		for (Proteincomplex complex : complexList) {
-			if(!complex.containsMin2Of3Proteins(p1, p2, p3))
+			if (!complex.containsMin2Of3Proteins(p1, p2, p3))
 				numberOfObservations--;
 			if (p1p2 && complex.contains2Proteins(p1, p2))
 				counts.plus1("1 0 0");
