@@ -25,8 +25,8 @@ import modalLogic.formula.Constant;
 import modalLogic.formula.Literal;
 import modalLogic.formula.factory.FormulaFactory;
 
-//import QuineMcCluskey.Formula;
-import QuineMcCluskey.Term;
+//import quineMcCluskey.Formula;
+import quineMcCluskey.Term;
 
 
 /**
@@ -108,7 +108,7 @@ public class Reconstructor {
 		}
 		log.printMessage(0,"> " + path + "\n");
 		log.printMessage(0, "1\t");
-		QuineMcCluskey.Formula quineFormula1 = readOnly1LinesFromTruthtableToFormula(path, threshold);
+		quineMcCluskey.Formula quineFormula1 = readOnly1LinesFromTruthtableToFormula(path, threshold);
 		long start = System.currentTimeMillis();
 		Formula<String> formula1;
 		if (quineFormula1 != null){
@@ -159,7 +159,7 @@ public class Reconstructor {
 		
 		
 		log.printMessage(0, "0\t");
-		QuineMcCluskey.Formula quineFormula0 = readOnly0LinesFromTruthtableToFormula(path, threshold);
+		quineMcCluskey.Formula quineFormula0 = readOnly0LinesFromTruthtableToFormula(path, threshold);
 		start = System.currentTimeMillis();
 		Formula<String> formula0;
 		if (quineFormula0 != null){
@@ -246,7 +246,7 @@ public class Reconstructor {
 		}else{
 			log.printMessage(0, "Threshold: " + threshold + "\n"); 
 		}
-		QuineMcCluskey.Formula quineFormula = readOnly1LinesFromTruthtableToFormula(path, threshold);
+		quineMcCluskey.Formula quineFormula = readOnly1LinesFromTruthtableToFormula(path, threshold);
 		Formula<String> formula;
 		if (quineFormula != null){
 			log.printMessage(10, "Formula represented through truth-table: \n" + quineFormula.toString() + "\n");
@@ -269,8 +269,8 @@ public class Reconstructor {
 	 * @param threshold - threshold whether an entry is counted as 1 or 0
 	 * @return the formula represented through the truth-table (in the Quine-McCluskey-Formula-Format)
 	 */
-	public QuineMcCluskey.Formula readOnly1LinesFromTruthtableToFormula(String path, double threshold){
-		QuineMcCluskey.Formula formula = null;
+	public quineMcCluskey.Formula readOnly1LinesFromTruthtableToFormula(String path, double threshold){
+		quineMcCluskey.Formula formula = null;
 		try {			
 			BufferedReader reader = new BufferedReader(new FileReader(path));
 			String line;
@@ -304,7 +304,7 @@ public class Reconstructor {
 				}								
 			}
 			if (terms.size() != 0){
-				formula = new QuineMcCluskey.Formula(terms);
+				formula = new quineMcCluskey.Formula(terms);
 			}else{
 //				System.out.println("Error because of Nullfunction. Only lines with last entry '1' are stored.");
 //				System.exit(-1);
@@ -329,7 +329,7 @@ public class Reconstructor {
 	 * @param formula - the formula to be reduced (has to be in the Quine-McCluskey-Formula-Format)
 	 * @return the reduced formula (in the Quine-McCluskey-Formula-Format)
 	 */
-	public QuineMcCluskey.Formula executeQuineMcCluskey(QuineMcCluskey.Formula formula){
+	public quineMcCluskey.Formula executeQuineMcCluskey(quineMcCluskey.Formula formula){
 		formula.reduceToPrimeImplicants();
 		log.printMessage(10, "PrimeImplicants of the formula: \n" + formula.toString() + "\n");
 		formula.reducePrimeImplicantsToSubset();
@@ -353,7 +353,7 @@ public class Reconstructor {
 	 * @return the transformed formula in the libModallogic-Formula-Format
 	 */
 	@SuppressWarnings("unchecked")
-	public Formula<String> from1LinesQuineMcCluskeyFormulaToLibModallogicFormulaInDNF(QuineMcCluskey.Formula quineFormula, String[] literalNames){
+	public Formula<String> from1LinesQuineMcCluskeyFormulaToLibModallogicFormulaInDNF(quineMcCluskey.Formula quineFormula, String[] literalNames){
 		FormulaFactory<String> factory = new FormulaFactory<String>();
 		List<byte[]> termList = quineFormula.getTermList();
 		
@@ -802,7 +802,7 @@ public class Reconstructor {
 		}else{
 			log.printMessage(0, "Threshold: " + threshold + "\n");
 		}
-		QuineMcCluskey.Formula quineFormula = readOnly0LinesFromTruthtableToFormula(path, threshold);
+		quineMcCluskey.Formula quineFormula = readOnly0LinesFromTruthtableToFormula(path, threshold);
 		Formula<String> formula;
 		if (quineFormula != null){
 			log.printMessage(10, "Formula represented through truth-table: \n" + quineFormula.toString());
@@ -824,8 +824,8 @@ public class Reconstructor {
 	 * @param path - path to a .csv-file containing a truth-table
 	 * @return the formula represented through the truth-table (in the Quine-McCluskey-Formula-Format)
 	 */
-	public QuineMcCluskey.Formula readOnly0LinesFromTruthtableToFormula(String path, double threshold){
-		QuineMcCluskey.Formula formula = null;
+	public quineMcCluskey.Formula readOnly0LinesFromTruthtableToFormula(String path, double threshold){
+		quineMcCluskey.Formula formula = null;
 		try {			
 			BufferedReader reader = new BufferedReader(new FileReader(path));
 			String line;
@@ -860,7 +860,7 @@ public class Reconstructor {
 				}								
 			}							
 			if (terms.size() != 0){
-				formula = new QuineMcCluskey.Formula(terms);
+				formula = new quineMcCluskey.Formula(terms);
 			}else{
 //					System.out.println("Error because of Onefunction. Only lines with last entry '0' are stored.");
 //					System.exit(-1);
@@ -887,7 +887,7 @@ public class Reconstructor {
 	 * @return the transformed formula in the libModallogic-Formula-Format
 	 */
 	@SuppressWarnings("unchecked")
-	public Formula<String> from0LinesQuineMcCluskeyFormulaToLibModallogicFormulaInCNF(QuineMcCluskey.Formula quineFormula, String[] literalNames){
+	public Formula<String> from0LinesQuineMcCluskeyFormulaToLibModallogicFormulaInCNF(quineMcCluskey.Formula quineFormula, String[] literalNames){
 		FormulaFactory<String> factory = new FormulaFactory<String>();
 		List<byte[]> termList = quineFormula.getTermList();
 		// indicates whether at least one term contains at least one literal that isn't don't-care (tautologies have only don't-cares)

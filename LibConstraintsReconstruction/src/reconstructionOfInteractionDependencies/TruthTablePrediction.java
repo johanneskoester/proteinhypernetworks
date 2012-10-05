@@ -9,6 +9,7 @@ package reconstructionOfInteractionDependencies;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -102,8 +103,7 @@ public class TruthTablePrediction {
 	private void readProteinComplexes(String path) {
 		complexes = new ArrayList<Proteincomplex>();
 		proteins = new HashMap<String, Protein>();
-		int id = -1;
-		int j = 0;
+		String id = null;
 		String proteinName = "";
 		Proteincomplex tempComplex = null;
 		Protein tempProtein = null;
@@ -119,7 +119,7 @@ public class TruthTablePrediction {
 			while ((line = reader.readLine()) != null) {
 				StringTokenizer tokenizer = new StringTokenizer(line, "\t");
 				// 1st column contains the complex-id
-				j = Integer.parseInt(tokenizer.nextToken());
+				String j = tokenizer.nextToken();
 				if (j != id) {
 					if (tempComplex != null) {
 						complexes.add(tempComplex);
@@ -266,8 +266,8 @@ public class TruthTablePrediction {
 						// + ", " + p3.getName());
 						// Filling the truth-table for the three proteins
 						if (fillTruthTableFor3Proteins(p1, p2, p3,
-								pathDestination + "table" + tableCounter
-										+ ".csv", threshold, modus)) {
+								new File(pathDestination, "table" + tableCounter
+										+ ".csv").getPath(), threshold, modus)) {
 							tableCounter++;
 						}
 					}
@@ -318,8 +318,8 @@ public class TruthTablePrediction {
 								// Filling the truth-table for the three
 								// proteins
 								if (fillTruthTableFor3Proteins(p1, p2, p3,
-										pathDestination + "table"
-												+ tableCounter + ".csv",
+										new File(pathDestination, "table"
+												+ tableCounter + ".csv").getPath(),
 										threshold, modus)) {
 									tableCounter++;
 								}
@@ -445,9 +445,9 @@ public class TruthTablePrediction {
 							/ (float) numberOfObservations;
 					// Writing the truth-value as quotient of the occurences and
 					// the number of complexes
-					writer.write(temp + relativeValue);
+					writer.write(temp + " "  + relativeValue);
 				} else if (modus == absoluteModus) {
-					writer.write(temp + absoluteValue);
+					writer.write(temp + " " + absoluteValue);
 				}
 				writer.newLine();
 			}

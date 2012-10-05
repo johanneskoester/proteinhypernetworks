@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class Proteincomplex {
 	
 	/** Each complex has a unique id. */
-	private int id;
+	private String id;
 	/** List of proteins in this complex. */
 	private ArrayList<Protein> proteins;
 	
@@ -25,7 +25,7 @@ public class Proteincomplex {
 	 * Constructor which sets the id and initializes the list of proteins.
 	 * @param pId - id of the complex
 	 */
-	public Proteincomplex(int pId) {
+	public Proteincomplex(String pId) {
 		id = pId;
 		proteins = new ArrayList<Protein>();
 	}
@@ -42,7 +42,7 @@ public class Proteincomplex {
 	 * Returns the id of this complex.
 	 * @return the id of this complex
 	 */
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	

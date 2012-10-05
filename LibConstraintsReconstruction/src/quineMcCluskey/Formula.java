@@ -23,7 +23,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Retrieved from: http://en.literateprograms.org/Quine-McCluskey_algorithm_(Java)?oldid=17357
 */
-package QuineMcCluskey; // Package hinzugefügt
+package quineMcCluskey; // Package hinzugefügt
 
 import java.util.*;
 import java.io.*;
