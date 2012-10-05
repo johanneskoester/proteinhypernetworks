@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project PHAse">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/PHAse/dist/phase.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="CLI"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/PHAse/bin"/>
+            <fileset dir="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibLogicProteinHypernetwork/build/classes"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibLogicProteinHypernetwork/dist/lib/collections-generic-4.01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibLogicProteinHypernetwork/dist/lib/jung-api-2.0.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibLogicProteinHypernetwork/dist/lib/jung-algorithms-2.0.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibLogicProteinHypernetwork/dist/lib/jung-graph-impl-2.0.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibLogicProteinHypernetwork/dist/lib/Knowceans.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibLogicProteinHypernetwork/dist/lib/LibModalLogic.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibLogicProteinHypernetwork/dist/lib/LibProteinHypernetwork.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibLogicProteinHypernetwork/dist/LibLogicProteinHypernetwork.jar"/>
+            <fileset dir="/vol/home/koester/scms/libmodallogic/trunk/LibModalLogic/build/classes"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/libmodallogic/trunk/LibModalLogic/dist/lib/collections-generic-4.01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/libmodallogic/trunk/LibModalLogic/dist/LibModalLogic.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/libmodallogic/trunk/LibModalLogic/lib/collections-generic-4.01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/libmodallogic/trunk/LibModalLogic/lib/CopyLibs/org-netbeans-modules-java-j2seproject-copylibstask.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/libmodallogic/trunk/LibModalLogic/lib/junit_4/junit-4.10-javadoc.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/libmodallogic/trunk/LibModalLogic/lib/junit_4/junit-4.10-sources.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/libmodallogic/trunk/LibModalLogic/lib/junit_4/junit-4.10.jar"/>
+            <fileset dir="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibProteinHypernetwork/build/classes"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibProteinHypernetwork/dist/lib/collections-generic-4.01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibProteinHypernetwork/dist/lib/jung-api-2.0.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibProteinHypernetwork/dist/lib/jung-graph-impl-2.0.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibProteinHypernetwork/dist/lib/LibModalLogic.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibProteinHypernetwork/dist/LibProteinHypernetwork.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/vol/home/koester/scms/jcommander/target/jcommander-1.30-SNAPSHOT.jar"/>
+            <fileset dir="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/LibConstraintsReconstruction/bin"/>
+        </jar>
+    </target>
+</project>

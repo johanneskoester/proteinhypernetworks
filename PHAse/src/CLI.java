@@ -15,13 +15,6 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
@@ -32,7 +25,7 @@ import com.beust.jcommander.Parameter;
 public class CLI {
 	public static String usage = "PHAse <input> <output>";
 
-	@Parameter(description = "Output")
+	@Parameter(description = "<output>")
 	private List<String> parameters = new ArrayList<String>();
 
 	@Parameter(names = { "-h", "--help" }, description = "Print this message.")
@@ -47,8 +40,11 @@ public class CLI {
 	@Parameter(names = { "-s", "--similarity" }, description = "Predict functional similarities.")
 	private boolean predictSimilarity;
 
-	@Parameter(names = { "-c", "--truthtables" }, description = "Predict interaction truth tables.")
+	@Parameter(names = { "-tt", "--truthtables" }, description = "Predict interaction truth tables.")
 	private boolean predictTruthTables;
+	
+	@Parameter(names = { "-mc", "--min-complexes" }, description = "Minimum number of complexes that have to contain a pair of proteins for truth table prediction.")
+	private int minTTComplexes = 3;
 
 	@Parameter(names = { "-t", "--threads" }, description = "Number of threads to use (1 per default).")
 	private int threads = 1;
@@ -125,7 +121,7 @@ public class CLI {
 				jc.usage();
 				return;
 			}
-			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, output);
+			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, new File(output), cli.minTTComplexes);
 		}
 	}
 }

@@ -76,9 +76,13 @@ public class Controller {
 		logicHypernetwork.predictFunctionalSimilarities(os);
 	}
 	
-	public void predictTruthTables(String network, String complexes, String destination) {
+	public void predictTruthTables(String network, String complexes, File destination, int minComplexes) {
+		if(!destination.exists()) {
+			destination.mkdir();
+		}
 		TruthTablePrediction ttp = new TruthTablePrediction(complexes, network, 2);
-		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination, 10, 1);
-		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination, 10, 1);
+		ttp.printProteins();
+		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination.getPath(), minComplexes, 1);
+		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, 1);
 	}
 }
