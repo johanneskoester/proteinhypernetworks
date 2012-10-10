@@ -120,7 +120,7 @@ public class TruthTablePrediction {
 				StringTokenizer tokenizer = new StringTokenizer(line, "\t");
 				// 1st column contains the complex-id
 				String j = tokenizer.nextToken();
-				if (j != id) {
+				if (!j.equals(id)) {
 					if (tempComplex != null) {
 						complexes.add(tempComplex);
 					}
@@ -142,9 +142,11 @@ public class TruthTablePrediction {
 
 			}
 			// Printing of all complexes
-			// for (int i = 0; i < complexes.size(); i++){
-			// System.out.println(complexes.get(i).toString());
-			// }
+			/*
+			 * for (int i = 0; i < complexes.size(); i++){
+			 * System.out.println(complexes.get(i).toString()); }
+			 */
+
 			reader.close();
 		} catch (FileNotFoundException e) {
 			System.out
@@ -209,13 +211,11 @@ public class TruthTablePrediction {
 					proteinNameB = tokenizer.nextToken().toUpperCase(); // column
 																		// 2
 					tempProteinB = proteins.get(proteinNameB);
-					if (tempProteinB != null) {
+					if (tempProteinB != null
+							&& !tempProteinA.equals(tempProteinB)) { // ignore
+																		// self-interactions
 						tempProteinA.addInteraction(tempProteinB);
-						// if a protein interacts with itself we only have
-						// to add it once to the interactions-list
-						if (!tempProteinA.equals(tempProteinB)) {
-							tempProteinB.addInteraction(tempProteinA);
-						}
+						tempProteinB.addInteraction(tempProteinA);
 					}
 				}
 			}
@@ -265,8 +265,8 @@ public class TruthTablePrediction {
 						// System.out.println(p1.getName() + ", " + p2.getName()
 						// + ", " + p3.getName());
 						// Filling the truth-table for the three proteins
-						if (fillTruthTableFor3Proteins(p1, p2, p3,
-								new File(pathDestination, "table" + tableCounter
+						if (fillTruthTableFor3Proteins(p1, p2, p3, new File(
+								pathDestination, "table" + tableCounter
 										+ ".csv").getPath(), threshold, modus)) {
 							tableCounter++;
 						}
@@ -319,8 +319,8 @@ public class TruthTablePrediction {
 								// proteins
 								if (fillTruthTableFor3Proteins(p1, p2, p3,
 										new File(pathDestination, "table"
-												+ tableCounter + ".csv").getPath(),
-										threshold, modus)) {
+												+ tableCounter + ".csv")
+												.getPath(), threshold, modus)) {
 									tableCounter++;
 								}
 							}
@@ -385,47 +385,83 @@ public class TruthTablePrediction {
 			numberOfVariables++;
 		}
 
-		/*
-		 * Map<String, Integer> table = new HashMap<String, Integer>(); for (int
-		 * i = 0; i < complexList.size(); i++) { line = ""; // Each complex
-		 * provides a line in the table depending on // which proteins it
-		 * contains Proteincomplex actualComplex = complexList.get(i); if (p1p2)
-		 * { if (actualComplex.contains2Proteins(p1, p2)) { line = line + "1 ";
-		 * } else { line = line + "0 "; } } if (p2p3) { if
-		 * (actualComplex.contains2Proteins(p2, p3)) { line = line + "1 "; }
-		 * else { line = line + "0 "; } } if (p3p1) { if
-		 * (actualComplex.contains2Proteins(p3, p1)) { line = line + "1 "; }
-		 * else { line = line + "0 "; } }// here we count the occurrences of
-		 * each line if (line.equals("0 ") || line.equals("0 0 ") ||
-		 * line.equals("0 0 0 ")) { numberOfObservations--; } else if
-		 * (table.get(line) == null) { table.put(line, 1); } else {
-		 * table.put(line, (table.get(line) + 1)); } }
-		 */
+		// Map<String, Integer> table = new HashMap<String, Integer>();
+		// for (int i = 0; i < complexList.size(); i++) {
+		// line = ""; // Each complex provides a line in the table depending on
+		// // which proteins it contains
+		// Proteincomplex actualComplex = complexList.get(i);
+		// if (p1p2) {
+		// if (actualComplex.contains2Proteins(p1, p2)) {
+		// line = line + "1 ";
+		// } else {
+		// line = line + "0 ";
+		// }
+		// }
+		// if (p2p3) {
+		// if (actualComplex.contains2Proteins(p2, p3)) {
+		// line = line + "1 ";
+		// } else {
+		// line = line + "0 ";
+		// }
+		// }
+		// if (p3p1) {
+		// if (actualComplex.contains2Proteins(p3, p1)) {
+		// line = line + "1 ";
+		// } else {
+		// line = line + "0 ";
+		// }
+		// }// here we count the occurrences of each line
+		// if (line.equals("0 ") || line.equals("0 0 ")
+		// || line.equals("0 0 0 ")) {
+		// numberOfObservations--;
+		// } else if (table.get(line) == null) {
+		// table.put(line, 1);
+		// } else {
+		// table.put(line, (table.get(line) + 1));
+		// }
+		// }
 
 		// Alternative implementation that does not produce artifacts for
 		// 3-interaction cases
 		Counter<String> counts = new Counter<String>();
-		for (Proteincomplex complex : complexList) {
-			if (!complex.containsMin2Of3Proteins(p1, p2, p3))
-				numberOfObservations--;
-			if (p1p2 && complex.contains2Proteins(p1, p2))
-				counts.plus1("1 0 0");
-			if (p2p3 && complex.contains2Proteins(p2, p3))
-				counts.plus1("0 1 0");
-			if (p3p1 && complex.contains2Proteins(p3, p1))
-				counts.plus1("0 0 1");
-			if (complex.contains3Proteins(p1, p2, p3)) {
-				if (p1p2 && p2p3)
+		if (numberOfVariables < 3) {
+			for (Proteincomplex complex : complexList) {
+				if (complex.contains3Proteins(p1, p2, p3)) {
+					counts.plus1("1 1");
+				} else if (p1p2 && complex.contains2Proteins(p1, p2)) {
+					counts.plus1("1 0");
+				} else if (p2p3 && complex.contains2Proteins(p2, p3)) {
+					counts.plus1("0 1");
+				} else if (p3p1 && complex.contains2Proteins(p3, p1)) {
+					counts.plus1("0 1");
+				}
+
+			}
+		} else {
+			for (Proteincomplex complex : complexList) {
+				if (complex.contains3Proteins(p1, p2, p3)) {
 					counts.plus1("1 1 0");
-				if (p1p2 && p3p1)
 					counts.plus1("1 0 1");
-				if (p2p3 && p3p1)
 					counts.plus1("0 1 1");
-				if (p1p2 && p2p3 && p3p1)
 					counts.plus1("1 1 1");
+				} else if (complex.contains2Proteins(p1, p2)) {
+					counts.plus1("1 0 0");
+				} else if (complex.contains2Proteins(p2, p3)) {
+					counts.plus1("0 1 0");
+				} else if (complex.contains2Proteins(p3, p1)) {
+					counts.plus1("0 0 1");
+				}
+
 			}
 		}
 		Map<String, Integer> table = counts.getMap();
+
+		if (table.size() < 2) {
+			if(numberOfVariables > 2 || table.containsKey("1 0") || table.containsKey("0 1") ) {
+				System.out.println("Observed only one interaction.");
+				return false;
+			}
+		}
 
 		// end
 
@@ -445,7 +481,7 @@ public class TruthTablePrediction {
 							/ (float) numberOfObservations;
 					// Writing the truth-value as quotient of the occurences and
 					// the number of complexes
-					writer.write(temp + " "  + relativeValue);
+					writer.write(temp + " " + relativeValue);
 				} else if (modus == absoluteModus) {
 					writer.write(temp + " " + absoluteValue);
 				}
@@ -467,11 +503,12 @@ public class TruthTablePrediction {
 						line = line + "0 ";
 					}
 				}
+				line = line.trim();
 				if (table.get(line) == null) {
 					if (j == 0) {
-						line = line + "1";
+						line = line + " 1";
 					} else {
-						line = line + "0";
+						line = line + " 0";
 					}
 					writer.write(line);
 					if (j < numberOfLines - 1) {

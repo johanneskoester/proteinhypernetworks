@@ -112,5 +112,5 @@ public class Protein {
 	public int hashCode(){
 	    return 31 * this.name.hashCode();
 	}
-
+	
 }
