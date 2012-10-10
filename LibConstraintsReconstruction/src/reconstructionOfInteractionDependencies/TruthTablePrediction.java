@@ -461,6 +461,9 @@ public class TruthTablePrediction {
 				System.out.println("Observed only one interaction.");
 				return false;
 			}
+		}else if(table.size() == (1 << numberOfVariables) - 1) {
+			// complete table 
+			// TODO skip this once we have a sophisticated threshold method
 		}
 
 		// end
