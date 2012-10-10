@@ -80,8 +80,8 @@ public class Controller {
 		if(!destination.exists()) {
 			destination.mkdir();
 		}
-		TruthTablePrediction ttp = new TruthTablePrediction(complexes, network, 2);
-		ttp.printProteins();
+		TruthTablePrediction ttp = new TruthTablePrediction(complexes, network, 10);
+		//ttp.printProteins();
 		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination.getPath(), minComplexes, 1);
 		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, 1);
 	}
