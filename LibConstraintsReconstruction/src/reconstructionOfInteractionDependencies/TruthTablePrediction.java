@@ -457,7 +457,7 @@ public class TruthTablePrediction {
 		Map<String, Integer> table = counts.getMap();
 
 		if (table.size() < 2) {
-			if(numberOfVariables > 2 || table.containsKey("1 0") || table.containsKey("0 1") ) {
+			if(!table.containsKey("1 1")) {
 				System.out.println("Observed only one interaction.");
 				return false;
 			}
