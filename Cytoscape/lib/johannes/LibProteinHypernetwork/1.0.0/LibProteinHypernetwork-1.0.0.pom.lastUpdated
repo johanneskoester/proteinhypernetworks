@@ -1,0 +1,12 @@
+#NOTE: This is an internal implementation file, its format can be changed without prior notice.
+#Tue Oct 23 10:19:02 CEST 2012
+default-file\://home/workspace/Cy3myProject/sample02/repo/.lastUpdated=1350980229033
+default-file\://home/elly/workspace/Cy3myProject/sample02/lib/repo/.lastUpdated=1350977201855
+file\://home/elly/workspace/Cy3myProject/sample02/lib/repo/.error=Could not transfer artifact johannes\:LibProteinHypernetwork\:pom\:1.0.0 from/to repo (file\://home/elly/workspace/Cy3myProject/sample02/lib/repo)\: Repository path /elly/workspace/Cy3myProject/sample02/lib/repo does not exist, and cannot be created.
+default-file\://home/elly/workspace/Cy3myProject/sample02/repo/.lastUpdated=1350980342635
+http\://code.cytoscape.org/nexus/content/repositories/releases/.lastUpdated=1350977129960
+file\://home/workspace/Cy3myProject/sample02/repo/.error=Could not transfer artifact johannes\:LibProteinHypernetwork\:pom\:1.0.0 from/to repo (file\://home/workspace/Cy3myProject/sample02/repo)\: Repository path /workspace/Cy3myProject/sample02/repo does not exist, and cannot be created.
+http\://code.cytoscape.org/nexus/content/repositories/releases/.error=
+http\://repo1.maven.org/maven2/.lastUpdated=1350977130265
+http\://repo1.maven.org/maven2/.error=
+file\://home/elly/workspace/Cy3myProject/sample02/repo/.error=Could not transfer artifact johannes\:LibProteinHypernetwork\:pom\:1.0.0 from/to repo (file\://home/elly/workspace/Cy3myProject/sample02/repo)\: Repository path /elly/workspace/Cy3myProject/sample02/repo does not exist, and cannot be created.
