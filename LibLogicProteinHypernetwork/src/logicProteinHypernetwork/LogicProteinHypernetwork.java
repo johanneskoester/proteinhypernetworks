@@ -15,6 +15,8 @@ import logicProteinHypernetwork.analysis.complexes.SPINComplexPrediction;
 import logicProteinHypernetwork.analysis.complexes.lcma.LCMAComplexPrediction;
 import logicProteinHypernetwork.analysis.functionalSimilarity.FunctionalSimilarityOutputStream;
 import logicProteinHypernetwork.analysis.functionalSimilarity.FunctionalSimilarityPrediction;
+import logicProteinHypernetwork.analysis.perturbationEffects.PerturbationEffect;
+import logicProteinHypernetwork.analysis.perturbationEffects.PerturbationEffectPrediction;
 import logicProteinHypernetwork.analysis.pis.PIS;
 import logicProteinHypernetwork.analysis.pis.PISPrediction;
 import logicProteinHypernetwork.analysis.pis.SinglePIS;
@@ -41,6 +43,7 @@ public class LogicProteinHypernetwork {
   private PISPrediction pisPrediction;
   private FunctionalSimilarityPrediction functionalSimilarityPrediction;
   private ReactionsPrediction reactionsPrediction;
+  private PerturbationEffectPrediction perturbationEffectPrediction;
   private ProgressBean progressBean = new ProgressBean();
   private int threadCount;
   private boolean pisDoSynthetic;
@@ -173,6 +176,11 @@ public class LogicProteinHypernetwork {
     reactionsPrediction.process();
   }
   
+  public void predictPerturbation(Collection<NetworkEntity> perturbation) {
+	  perturbationEffectPrediction = new PerturbationEffectPrediction(perturbation, proteinHypernetwork);
+	  perturbationEffectPrediction.process();
+  }
+  
   public List<Reaction> getReactions() {
     return reactionsPrediction.getReactions();
   }
@@ -205,6 +213,10 @@ public class LogicProteinHypernetwork {
       return (List<SinglePIS>) pisPrediction.getPIS();
     }
     throw new IllegalStateException("Synthetic master switches were predicted.");
+  }
+  
+  public PerturbationEffect getPerturbationEffect() {
+	  return perturbationEffectPrediction.getEffect();
   }
 
   /**
