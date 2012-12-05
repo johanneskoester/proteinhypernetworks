@@ -9,16 +9,21 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Formatter;
 
 import javax.xml.stream.XMLStreamException;
 
 import logicProteinHypernetwork.LogicProteinHypernetwork;
 import logicProteinHypernetwork.analysis.complexes.Complex;
 import logicProteinHypernetwork.analysis.functionalSimilarity.FunctionalSimilarityOutputStream;
+import logicProteinHypernetwork.analysis.perturbationEffects.PerturbationEffect;
 import logicProteinHypernetwork.analysis.pis.PIS;
+import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.ProteinHypernetwork;
 import proteinHypernetwork.decoder.HypernetworkMLDecoder;
+import proteinHypernetwork.exceptions.UnknownEntityException;
 import reconstructionOfInteractionDependencies.TruthTablePrediction;
 
 /**
@@ -58,22 +63,42 @@ public class Controller {
 			for (Complex c : logicHypernetwork.getComplexes()) {
 				Collections.sort(c);
 				writer.append(c.toString());
+				writer.newLine();
 			}
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
+		writer.close();
 	}
 	
 	public void predictPIS(BufferedWriter writer) throws IOException {
 		logicHypernetwork.predictPIS();
 		for (PIS pis : logicHypernetwork.getPIS()) {
 			writer.append(pis.toString());
+			writer.newLine();
 		}
+		writer.close();
 	}
 	
 	public void predictFunctionalSimilarities(BufferedWriter writer) throws IOException {
 		FunctionalSimilarityOutputStream os = new FunctionalSimilarityOutputStream(writer);
 		logicHypernetwork.predictFunctionalSimilarities(os);
+		writer.close();
+	}
+	
+	public void predictPerturbationEffects(Collection<String> perturbationIds, BufferedWriter writer) throws IOException, UnknownEntityException {
+		logicHypernetwork.predictPerturbation(hypernetwork.getNetworkEntities(perturbationIds));
+		PerturbationEffect pe = logicHypernetwork.getPerturbationEffect();
+		writer.append("entity\tpossible\tdependencies\tcompetitors");
+		writer.newLine();
+		for(NetworkEntity e : hypernetwork.getNetworkEntities()) {
+			Formatter line = new Formatter(new StringBuilder());
+			line.format("%1$s\t%2$b\t%3$d\t%4$d", e, pe.getPossibility().get(e), pe.getDependencies().get(e), pe.getCompetitors().get(e));
+			
+			writer.append(line.toString());
+			writer.newLine();
+		}
+		writer.close();
 	}
 	
 	public void predictTruthTables(String network, String complexes, File destination, int minComplexes) {

@@ -8,12 +8,15 @@
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
+
+import proteinHypernetwork.exceptions.UnknownEntityException;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -34,11 +37,14 @@ public class CLI {
 	@Parameter(names = { "-c", "--complexes" }, description = "Predict protein complexes.")
 	private boolean predictComplexes;
 
-	@Parameter(names = { "-p", "--pis" }, description = "Predict perturbation impact.")
+	@Parameter(names = { "-p", "--pis" }, description = "Predict perturbation impact score.")
 	private boolean predictPIS;
 
 	@Parameter(names = { "-s", "--similarity" }, description = "Predict functional similarities.")
 	private boolean predictSimilarity;
+	
+	@Parameter(names = { "-pe", "--perturbationeffects" }, description = "Predict perturbation effects.")
+	private boolean predictPerturbationEffects;
 
 	@Parameter(names = { "-tt", "--truthtables" }, description = "Predict interaction truth tables.")
 	private boolean predictTruthTables;
@@ -57,6 +63,9 @@ public class CLI {
 
 	@Parameter(names = { "-lc", "--load-complexes" }, description = "Load protein complexes (1st column: complex id, 2nd column: protein name).")
 	private String complexes;
+	
+	@Parameter(names = { "-ptb", "--perturbations" }, description = "Proteins to perturb.")
+	private List<String> perturbations = new ArrayList<String>();
 
 	public static void main(String[] args) {
 		CLI cli = new CLI();
@@ -64,21 +73,25 @@ public class CLI {
 
 		if (cli.help) {
 			jc.usage();
-			return;
+			System.exit(0);
 		}
-		if (!(cli.predictComplexes || cli.predictTruthTables || cli.predictPIS || cli.predictSimilarity)) {
+		if (!(cli.predictComplexes || cli.predictTruthTables || cli.predictPIS || cli.predictSimilarity || cli.predictPerturbationEffects)) {
 			jc.usage();
-			return;
+			System.exit(1);
 		}
-		if ((cli.predictComplexes || cli.predictPIS || cli.predictSimilarity)
+		if(cli.predictPerturbationEffects && cli.perturbations.isEmpty()) {
+			jc.usage();
+			System.exit(1);
+		}
+		if ((cli.predictComplexes || cli.predictPIS || cli.predictSimilarity || cli.predictPerturbationEffects)
 				&& cli.hypernetwork == null) {
 			jc.usage();
-			return;
+			System.exit(1);
 		}
 		if (cli.predictTruthTables
 				&& (cli.network == null || cli.complexes == null)) {
 			jc.usage();
-			return;
+			System.exit(1);
 		}
 
 		String output = cli.parameters.get(0);
@@ -86,20 +99,30 @@ public class CLI {
 		BufferedWriter outstream = null;
 		if (output.equals("-")) {
 			outstream = new BufferedWriter(new OutputStreamWriter(System.out));
+		} else {
+			try {
+				outstream = new BufferedWriter(new FileWriter(output));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.exit(1);
+			}
 		}
 
 		Controller.getInstance().setThreads(cli.threads);
 
-		if (cli.predictComplexes || cli.predictPIS || cli.predictSimilarity) {
+		if (cli.predictComplexes || cli.predictPIS || cli.predictSimilarity || cli.predictPerturbationEffects) {
 			File inputFile = new File(cli.hypernetwork);
 			try {
 				Controller.getInstance().loadHypernetwork(inputFile);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.exit(1);
 			} catch (XMLStreamException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.exit(1);
 			}
 
 			try {
@@ -110,18 +133,25 @@ public class CLI {
 				} else if (cli.predictSimilarity) {
 					Controller.getInstance().predictFunctionalSimilarities(
 							outstream);
+				} else if (cli.predictPerturbationEffects) {
+					Controller.getInstance().predictPerturbationEffects(cli.perturbations, outstream);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.err.println(e.getMessage());
+				System.exit(1);
+			} catch(UnknownEntityException e) {
+				System.err.println(e.getMessage());
+				System.exit(1);
 			}
 		}
 		else if (cli.predictTruthTables) {
 			if(output.equals("-")) {
 				jc.usage();
-				return;
+				System.exit(1);
 			}
 			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, new File(output), cli.minTTComplexes);
 		}
+		System.exit(0);
 	}
 }

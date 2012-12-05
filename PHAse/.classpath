@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/LibLogicProteinHypernetwork"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/LibModalLogic"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/LibProteinHypernetwork"/>
 	<classpathentry kind="lib" path="/vol/home/koester/scms/jcommander/target/jcommander-1.30-SNAPSHOT.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/LibConstraintsReconstruction"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/LibModalLogic"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/LibProteinHypernetwork"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/LibConstraintsReconstruction"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/LibLogicProteinHypernetwork"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
