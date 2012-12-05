@@ -8,6 +8,5 @@
 	<classpathentry kind="lib" path="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/lib/jung-algorithms-2.0.1.jar"/>
 	<classpathentry kind="lib" path="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/lib/jung-api-2.0.1.jar"/>
 	<classpathentry kind="lib" path="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/lib/jung-graph-impl-2.0.1.jar"/>
-	<classpathentry kind="lib" path="/vol/home/koester/scms/proteinhypernetworks-suite/trunk/lib/knowceans-mcl/knowceans-mcl.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

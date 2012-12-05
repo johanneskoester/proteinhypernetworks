@@ -29,6 +29,7 @@ public class PerturbationEffectPrediction extends Processor {
 
 	@Override
 	public void process() {
+		mns.process();
 		estimateEffect(perturb);
 	}
 	

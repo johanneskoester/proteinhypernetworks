@@ -18,6 +18,7 @@ import org.apache.commons.collections15.multimap.MultiHashMap;
 import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.ProteinHypernetwork;
 import proteinHypernetwork.interactions.Interaction;
+import proteinHypernetwork.proteins.Protein;
 
 /**
  * Class MinimalNetworkStates handles the computation of minimal network states
@@ -116,7 +117,7 @@ public class MinimalNetworkStates extends Processor {
       if (!states.isEmpty()) {
         minimalNetworkStates.putAll(e, states);
       } else {
-        System.err.println("Error: Empty minimal network states without a perurbation!");
+        System.err.println("Error: Empty minimal network states without a perturbation!");
       }
 
       /*System.out.println("MinimalNetworkState " + minimalNetworkStates.size() +

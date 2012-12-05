@@ -38,7 +38,7 @@ public class TableauToMinimalNetworkState implements Transformer<Tableau<Network
 
     for(LabelledFormula<NetworkEntity> l : w.getNegativeLiterals()) {
       Formula<NetworkEntity> f = l.getFormula();
-      if(f.getParent().getType() == Formula.DISJUNCTION &&
+      if(f.getParent().getType() != Formula.DISJUNCTION ||
               f.getParent().indexOf(f) != 0)
         s.addImpossible(f.getProposition());
     }

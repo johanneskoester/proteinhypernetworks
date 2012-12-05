@@ -71,6 +71,7 @@ public class NetworkEntityToMinimalNetworkStates implements Transformer<NetworkE
   public void calculateAllTableauPaths(final NetworkEntity e, final Formula<NetworkEntity> f, final Collection<MinimalNetworkState> states) {
     Stack<Collection<Formula<NetworkEntity>>> blocked = new Stack<Collection<Formula<NetworkEntity>>>();
     blocked.push(new ArrayList<Formula<NetworkEntity>>());
+    boolean first = true;
     while (!blocked.isEmpty()) {
       Tableau<NetworkEntity> tableau = new Tableau<NetworkEntity>(tableauRules, propositionComparator, false);
       tableau.setFormula(f);
@@ -82,6 +83,17 @@ public class NetworkEntityToMinimalNetworkStates implements Transformer<NetworkE
       }
 
       boolean satisfiable = tableau.proofSearch();
+      if(!satisfiable && first) {
+    	  System.err.println("Formula not satisfiable for entity " + e + ". This indicates a circular interaction dependency which is not allowed. Until you fix this, we assume that the entity does not have any competitors or dependencies.");
+    	  MinimalNetworkState mns = new MinimalNetworkState();
+          mns.addNecessary(e);
+          if(e instanceof Interaction) {
+          	for(Protein p : ((Interaction)e).getProteins())
+          		mns.addNecessary(p);
+          }
+          states.add(mns);
+    	  
+      }
       if (satisfiable) {
         MinimalNetworkState s = ts.transform(tableau);
         s.setEntity(e);
@@ -97,6 +109,7 @@ public class NetworkEntityToMinimalNetworkStates implements Transformer<NetworkE
           }
         }
       }
+      first = false;
     }
   }
 }
