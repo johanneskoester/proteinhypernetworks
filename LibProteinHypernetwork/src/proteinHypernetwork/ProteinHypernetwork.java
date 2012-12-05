@@ -9,9 +9,12 @@ package proteinHypernetwork;
 
 import edu.uci.ics.jung.graph.UndirectedGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.collections15.collection.CompositeCollection;
 import proteinHypernetwork.constraints.Constraints;
+import proteinHypernetwork.exceptions.UnknownEntityException;
 import proteinHypernetwork.interactions.Interaction;
 import proteinHypernetwork.interactions.Interactions;
 import proteinHypernetwork.proteins.Protein;
@@ -34,6 +37,24 @@ public class ProteinHypernetwork {
    */
   public ProteinHypernetwork() {
     networkEntities = new CompositeCollection<NetworkEntity>(new Collection[]{proteins, interactions});
+  }
+  
+  public Collection<NetworkEntity> getNetworkEntities(Collection<String> ids) throws UnknownEntityException {
+	  Collection<NetworkEntity> entities = new ArrayList<NetworkEntity>();
+	  for(String id : ids) {
+		  Protein p = proteins.getProteinById(id);
+		  if(p != null)
+			  entities.add(p);
+		  else {
+			  Interaction i = interactions.getInteractionWithId(id);
+			  if(i != null)
+				  entities.add(i);
+			  else {
+				  throw new UnknownEntityException(id);
+			  }
+		  }
+	  }
+	  return entities;
   }
 
   /**
