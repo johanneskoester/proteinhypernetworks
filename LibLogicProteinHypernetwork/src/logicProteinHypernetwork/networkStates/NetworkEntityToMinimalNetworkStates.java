@@ -86,6 +86,7 @@ public class NetworkEntityToMinimalNetworkStates implements Transformer<NetworkE
       if(!satisfiable && first) {
     	  System.err.println("Formula not satisfiable for entity " + e + ". This indicates a circular interaction dependency which is not allowed. Until you fix this, we assume that the entity does not have any competitors or dependencies.");
     	  MinimalNetworkState mns = new MinimalNetworkState();
+    	  mns.setEntity(e);
           mns.addNecessary(e);
           if(e instanceof Interaction) {
           	for(Protein p : ((Interaction)e).getProteins())
