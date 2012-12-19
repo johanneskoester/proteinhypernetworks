@@ -79,10 +79,6 @@ public class CLI {
 			jc.usage();
 			System.exit(1);
 		}
-		if(cli.predictPerturbationEffects && cli.perturbations.isEmpty()) {
-			jc.usage();
-			System.exit(1);
-		}
 		if ((cli.predictComplexes || cli.predictPIS || cli.predictSimilarity || cli.predictPerturbationEffects)
 				&& cli.hypernetwork == null) {
 			jc.usage();

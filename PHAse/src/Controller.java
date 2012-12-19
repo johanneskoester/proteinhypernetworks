@@ -93,7 +93,7 @@ public class Controller {
 		writer.newLine();
 		for(NetworkEntity e : hypernetwork.getNetworkEntities()) {
 			Formatter line = new Formatter(new StringBuilder());
-			line.format("%1$s\t%2$b\t%3$d\t%4$d", e, pe.getPossibility().get(e), pe.getDependencies().get(e), pe.getCompetitors().get(e));
+			line.format("%1$s\t%2$d\t%3$d\t%4$d", e, pe.getPossibility().get(e) ? 1 : 0, pe.getDependencies().get(e), pe.getCompetitors().get(e));
 			
 			writer.append(line.toString());
 			writer.newLine();
