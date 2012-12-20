@@ -89,11 +89,11 @@ public class Controller {
 	public void predictPerturbationEffects(Collection<String> perturbationIds, BufferedWriter writer) throws IOException, UnknownEntityException {
 		logicHypernetwork.predictPerturbation(hypernetwork.getNetworkEntities(perturbationIds));
 		PerturbationEffect pe = logicHypernetwork.getPerturbationEffect();
-		writer.append("entity\tpossible\tdependencies\tcompetitors");
+		writer.append("entity\tpossible\tactivators\tcompetitors");
 		writer.newLine();
 		for(NetworkEntity e : hypernetwork.getNetworkEntities()) {
 			Formatter line = new Formatter(new StringBuilder());
-			line.format("%1$s\t%2$d\t%3$d\t%4$d", e, pe.getPossibility().get(e) ? 1 : 0, pe.getDependencies().get(e), pe.getCompetitors().get(e));
+			line.format("%1$s\t%2$d\t%3$f\t%4$f", e, pe.getPossibility().get(e) ? 1 : 0, pe.getDependencies().get(e), pe.getCompetitors().get(e));
 			
 			writer.append(line.toString());
 			writer.newLine();
