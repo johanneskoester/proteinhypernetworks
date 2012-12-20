@@ -40,14 +40,21 @@ public class PerturbationEffectPrediction extends Processor {
 		
 		for(NetworkEntity e: hypernetwork.getNetworkEntities()) {
 			pe.getPossibility().put(e, mns.isPossible(e));
-			int competitors = 0;
-			int dependencies = 0;
-			for(MinimalNetworkState m : mns.getMinimalNetworkStates(e)) {
-				competitors += m.getImpossible().size();
-				dependencies += m.getNecessary().size();
+			float competitors = 0;
+			float dependencies = 0;
+			Collection<MinimalNetworkState> states = mns.getMinimalNetworkStates(e);
+			for(MinimalNetworkState m : states) {
+				for(NetworkEntity imp : m.getImpossible()) {
+					if(mns.isPossible(imp))
+						competitors++;
+				}
+				for(NetworkEntity nec : m.getNecessary()) {
+					if(mns.isPossible(nec))
+						dependencies++;
+				}
 			}
-			pe.getCompetitors().put(e, competitors);
-			pe.getDependencies().put(e, dependencies);
+			pe.getCompetitors().put(e, competitors / states.size());
+			pe.getDependencies().put(e, dependencies / states.size());
 		}
 		
 		effect = pe;
