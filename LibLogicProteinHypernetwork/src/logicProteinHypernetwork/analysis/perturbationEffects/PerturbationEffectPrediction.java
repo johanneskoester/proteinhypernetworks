@@ -49,12 +49,16 @@ public class PerturbationEffectPrediction extends Processor {
 						competitors++;
 				}
 				for(NetworkEntity nec : m.getNecessary()) {
-					if(mns.isPossible(nec))
+					if(mns.isPossible(nec) && !nec.equals(e))
 						dependencies++;
 				}
 			}
-			pe.getCompetitors().put(e, competitors / states.size());
-			pe.getDependencies().put(e, dependencies / states.size());
+			if(!states.isEmpty()) {
+				competitors = competitors / states.size();
+				dependencies = dependencies / states.size();
+			}
+			pe.getCompetitors().put(e, competitors);
+			pe.getDependencies().put(e, dependencies);
 		}
 		
 		effect = pe;

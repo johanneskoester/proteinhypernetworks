@@ -84,6 +84,9 @@ public class NetworkEntityToMinimalNetworkStates implements Transformer<NetworkE
 
       boolean satisfiable = tableau.proofSearch();
       if(!satisfiable && first) {
+    	  tableau = new Tableau<NetworkEntity>(tableauRules, propositionComparator, false, true);
+          tableau.setFormula(f);
+          tableau.proofSearch();
     	  System.err.println("Formula not satisfiable for entity " + e + ". This indicates a circular interaction dependency which is not allowed. Until you fix this, we assume that the entity does not have any competitors or dependencies.");
     	  MinimalNetworkState mns = new MinimalNetworkState();
     	  mns.setEntity(e);
