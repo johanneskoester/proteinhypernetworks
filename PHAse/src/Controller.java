@@ -20,6 +20,7 @@ import logicProteinHypernetwork.analysis.complexes.Complex;
 import logicProteinHypernetwork.analysis.functionalSimilarity.FunctionalSimilarityOutputStream;
 import logicProteinHypernetwork.analysis.perturbationEffects.PerturbationEffect;
 import logicProteinHypernetwork.analysis.pis.PIS;
+import modalLogic.formula.io.InvalidFormulaException;
 import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.ProteinHypernetwork;
 import proteinHypernetwork.decoder.HypernetworkMLDecoder;
@@ -50,7 +51,7 @@ public class Controller {
 	}
 
 	public void loadHypernetwork(File file) throws FileNotFoundException,
-			XMLStreamException {
+			XMLStreamException, InvalidFormulaException {
 		HypernetworkMLDecoder decoder = new HypernetworkMLDecoder();
 		hypernetwork = new ProteinHypernetwork();
 		decoder.decode(file, hypernetwork);
@@ -89,11 +90,11 @@ public class Controller {
 	public void predictPerturbationEffects(Collection<String> perturbationIds, BufferedWriter writer) throws IOException, UnknownEntityException {
 		logicHypernetwork.predictPerturbation(hypernetwork.getNetworkEntities(perturbationIds));
 		PerturbationEffect pe = logicHypernetwork.getPerturbationEffect();
-		writer.append("entity\tpossible\tactivators\tcompetitors");
+		writer.append("entity\tpossible\tmns\tactivators\tcompetitors");
 		writer.newLine();
 		for(NetworkEntity e : hypernetwork.getNetworkEntities()) {
 			Formatter line = new Formatter(new StringBuilder());
-			line.format("%1$s\t%2$d\t%3$f\t%4$f", e, pe.getPossibility().get(e) ? 1 : 0, pe.getDependencies().get(e), pe.getCompetitors().get(e));
+			line.format("%1$s\t%2$d\t%3$d\t%4$f\t%5$f", e, pe.getPossibility().get(e) ? 1 : 0, pe.getMNSCount().get(e), pe.getDependencies().get(e), pe.getCompetitors().get(e));
 			
 			writer.append(line.toString());
 			writer.newLine();

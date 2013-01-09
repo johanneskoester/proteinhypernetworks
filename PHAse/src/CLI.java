@@ -16,6 +16,8 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import modalLogic.formula.io.InvalidFormulaException;
+
 import proteinHypernetwork.exceptions.UnknownEntityException;
 
 import com.beust.jcommander.JCommander;
@@ -117,6 +119,9 @@ public class CLI {
 				System.exit(1);
 			} catch (XMLStreamException e) {
 				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.exit(1);
+			} catch (InvalidFormulaException e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
