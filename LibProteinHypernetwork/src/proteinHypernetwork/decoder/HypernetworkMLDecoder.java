@@ -24,6 +24,7 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import modalLogic.formula.Formula;
+import modalLogic.formula.io.InvalidFormulaException;
 import modalLogic.formula.io.MathMLReader;
 import modalLogic.formula.io.MathMLWriter;
 import modalLogic.formula.io.PropositionMap;
@@ -43,7 +44,7 @@ import proteinHypernetwork.proteins.Protein;
 public class HypernetworkMLDecoder implements Decoder {
 
   @Override
-  public void decode(File file, ProteinHypernetwork proteinHypernetwork) throws XMLStreamException, FileNotFoundException {
+  public void decode(File file, ProteinHypernetwork proteinHypernetwork) throws XMLStreamException, FileNotFoundException, InvalidFormulaException {
     XMLInputFactory fac = XMLInputFactory.newInstance();
 
     XMLEventReader xmlr = fac.createXMLEventReader(new BufferedInputStream(new FileInputStream(file)));
@@ -108,7 +109,7 @@ public class HypernetworkMLDecoder implements Decoder {
   }
 
   private void readConstraints(XMLEventReader xmlr, final Map<String, Protein> proteins,
-          final Map<String, Interaction> interactions, Collection<Constraint> constraints) throws XMLStreamException {
+          final Map<String, Interaction> interactions, Collection<Constraint> constraints) throws XMLStreamException, InvalidFormulaException {
 
     MathMLReader<NetworkEntity> mmlr = new MathMLReader<NetworkEntity>(xmlr, new PropositionMap<NetworkEntity>(){
 
@@ -127,7 +128,14 @@ public class HypernetworkMLDecoder implements Decoder {
       if (e.isStartElement()) {
         StartElement s = e.asStartElement();
         if (s.getName().getLocalPart().equals(MathMLWriter.APPLY)) {
-          Formula<NetworkEntity> formula = mmlr.read();
+          Formula<NetworkEntity> formula;
+		try {
+			formula = mmlr.read();
+		} catch (InvalidFormulaException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			throw new InvalidFormulaException();
+		}
           if(formula.getType() == Formula.IMPLICATION) {
             Constraint c = new Constraint();
             c.setImplication(formula);

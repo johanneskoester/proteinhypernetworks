@@ -29,6 +29,14 @@ public class Interaction extends AbstractListenable implements Iterable<Interact
   public String getId() {
     return toString();
   }
+  
+  public String getIdWithoutDomains() {
+	  String s = "";
+	  s += first().getProtein();
+	  s += " pp ";
+	  s += second().getProtein();
+	  return s;
+  }
 
   /**
    * Returns the interacting proteins.

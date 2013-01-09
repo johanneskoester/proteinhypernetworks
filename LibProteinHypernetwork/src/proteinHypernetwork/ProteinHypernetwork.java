@@ -46,12 +46,12 @@ public class ProteinHypernetwork {
 		  if(p != null)
 			  entities.add(p);
 		  else {
-			  Interaction i = interactions.getInteractionWithId(id);
-			  if(i != null)
+			  Collection<Interaction> is = interactions.getInteractionsWithId(id);
+			  for(Interaction i : is) {
 				  entities.add(i);
-			  else {
-				  throw new UnknownEntityException(id);
 			  }
+			  if(is.isEmpty())
+				  throw new UnknownEntityException(id);
 		  }
 	  }
 	  return entities;
