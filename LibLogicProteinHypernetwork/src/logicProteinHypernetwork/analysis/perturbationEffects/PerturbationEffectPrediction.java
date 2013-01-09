@@ -43,6 +43,8 @@ public class PerturbationEffectPrediction extends Processor {
 			float competitors = 0;
 			float dependencies = 0;
 			Collection<MinimalNetworkState> states = mns.getMinimalNetworkStates(e);
+			int mnscount = states.size();
+			// TODO how to count here in case of multiple mns? what does the number of activators mean?
 			for(MinimalNetworkState m : states) {
 				for(NetworkEntity imp : m.getImpossible()) {
 					if(mns.isPossible(imp))
@@ -59,6 +61,7 @@ public class PerturbationEffectPrediction extends Processor {
 			}
 			pe.getCompetitors().put(e, competitors);
 			pe.getDependencies().put(e, dependencies);
+			pe.getMNSCount().put(e, mnscount);
 		}
 		
 		effect = pe;

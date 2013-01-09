@@ -12,6 +12,8 @@ public class PerturbationEffect {
 	private Map<NetworkEntity, Boolean> possibility = new HashMap<NetworkEntity, Boolean>();
 	private Map<NetworkEntity, Float> competitors = new HashMap<NetworkEntity, Float>();
 	private Map<NetworkEntity, Float> dependencies = new HashMap<NetworkEntity, Float>();
+	private Map<NetworkEntity, Integer> mnscount = new HashMap<NetworkEntity, Integer>();
+	
 	public PerturbationEffect(Collection<NetworkEntity> perturbations) {
 		super();
 		this.perturbations = perturbations;
@@ -27,5 +29,9 @@ public class PerturbationEffect {
 	
 	public Map<NetworkEntity, Float> getDependencies() {
 		return dependencies;
+	}
+
+	public Map<NetworkEntity, Integer> getMNSCount() {
+		return mnscount;
 	}
 }
