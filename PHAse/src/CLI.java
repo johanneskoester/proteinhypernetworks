@@ -15,9 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
-
 import modalLogic.formula.io.InvalidFormulaException;
-
 import proteinHypernetwork.exceptions.UnknownEntityException;
 
 import com.beust.jcommander.JCommander;

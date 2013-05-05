@@ -31,6 +31,7 @@ import proteinHypernetwork.util.Listener;
  *
  * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
+@SuppressWarnings( { "rawtypes", "unchecked" } )
 public class HypernetworkMLEncoder implements Encoder {
 
   public static String HYPERNETWORK = "hypernetwork";

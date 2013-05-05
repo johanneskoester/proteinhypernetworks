@@ -43,6 +43,7 @@ import java.util.HashMap;
  * stored in a hash map for the particular network being analyzed by the MCODEScoreAndFindAction
  * if the analysis produced a result.
  */
+@SuppressWarnings( { "rawtypes", "unchecked" } )
 public class MCODECurrentParameters {
     private static MCODECurrentParameters ourInstance = new MCODECurrentParameters();
     private static HashMap currentParams = new HashMap();

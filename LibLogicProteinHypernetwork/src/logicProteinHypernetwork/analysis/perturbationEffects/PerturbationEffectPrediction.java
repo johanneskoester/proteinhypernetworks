@@ -1,11 +1,9 @@
 package logicProteinHypernetwork.analysis.perturbationEffects;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.ProteinHypernetwork;
-import logicProteinHypernetwork.LogicProteinHypernetwork;
 import logicProteinHypernetwork.analysis.Processor;
 import logicProteinHypernetwork.networkStates.MinimalNetworkState;
 import logicProteinHypernetwork.networkStates.MinimalNetworkStates;

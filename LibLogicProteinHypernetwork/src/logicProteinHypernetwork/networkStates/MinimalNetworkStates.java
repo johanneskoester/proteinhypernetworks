@@ -12,13 +12,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import logicProteinHypernetwork.analysis.Processor;
+
 import org.apache.commons.collections15.MultiMap;
 import org.apache.commons.collections15.multimap.MultiHashMap;
+
 import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.ProteinHypernetwork;
-import proteinHypernetwork.interactions.Interaction;
-import proteinHypernetwork.proteins.Protein;
 
 /**
  * Class MinimalNetworkStates handles the computation of minimal network states

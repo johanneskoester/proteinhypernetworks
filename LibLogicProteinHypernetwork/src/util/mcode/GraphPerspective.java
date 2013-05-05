@@ -11,6 +11,7 @@ import java.util.Iterator;
  *
  * @author koester
  */
+@SuppressWarnings( { "rawtypes" } )
 public interface GraphPerspective<V,E> {
     public int getNodeCount();
     public int[] getNodeIndicesArray();

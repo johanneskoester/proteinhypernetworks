@@ -8,16 +8,12 @@ package logicProteinHypernetwork.analysis.functionalSimilarity;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import logicProteinHypernetwork.LogicProteinHypernetwork;
 import logicProteinHypernetwork.analysis.Processor;
 import logicProteinHypernetwork.analysis.pis.SinglePIS;
 import proteinHypernetwork.ProteinHypernetwork;
 import proteinHypernetwork.interactions.Interaction;
 import proteinHypernetwork.proteins.Protein;
 import util.MyCollectionUtils;
-import util.ProgressBean;
 
 /**
  * Predict functional similarity.

@@ -14,6 +14,7 @@ import org.apache.commons.collections15.iterators.IteratorChain;
  *
  * @author koester
  */
+@SuppressWarnings("unchecked")
 public class PseudoSupervertex<V> implements Supervertex<V> {
   private Pair<RealSupervertex<V>> uv;
   private int hashCode;

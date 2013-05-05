@@ -23,6 +23,7 @@ import util.lcma.FastLCMA;
  * 
  * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
+@SuppressWarnings( { "rawtypes" } )
 public class LCMAComplexPrediction extends SPINComplexPrediction {
 
   private static float mergeSimilarityThreshold = 0.4f;

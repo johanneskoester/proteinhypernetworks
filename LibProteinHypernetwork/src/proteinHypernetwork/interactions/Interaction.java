@@ -99,7 +99,7 @@ public class Interaction extends AbstractListenable implements Iterable<Interact
    *
    * @return an iterator
    */
-  @Override
+@Override
   public Iterator<Interactor> iterator() {
     return new ArrayIterator(interactors);
   }

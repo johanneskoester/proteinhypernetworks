@@ -6,8 +6,6 @@
  */
 package util.lcma;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -16,6 +14,7 @@ import java.util.Iterator;
  *
  * @author Johannes Köster <johannes.koester@tu-dortmund.de>
  */
+@SuppressWarnings( { "rawtypes", "unchecked" } )
 public class MergedCliques<V, E> extends Subgraph<V> {
   private int edgeCount = 0;
 

@@ -6,14 +6,15 @@
  */
 package util.lcma;
 
-import edu.uci.ics.jung.graph.UndirectedGraph;
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.Transformer;
+
+import edu.uci.ics.jung.graph.UndirectedGraph;
 
 /**
  * Fast implementation of the LCM algorithm (Li et al., 2005)

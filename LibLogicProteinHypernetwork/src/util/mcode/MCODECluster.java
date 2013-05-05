@@ -45,6 +45,7 @@ import java.util.HashMap;
 /**
  * Stores various cluster information for simple get/set purposes.
  */
+@SuppressWarnings( { "rawtypes" } )
 public class MCODECluster {
     private ArrayList alCluster = null;
     private GraphPerspective gpCluster = null;

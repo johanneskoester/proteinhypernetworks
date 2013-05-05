@@ -46,6 +46,7 @@ import java.util.*;
 /**
  * An implementation of the MCODE algorithm
  */
+@SuppressWarnings( { "rawtypes", "unchecked" } )
 public class MCODEAlgorithm {
     private boolean cancelled = false;
     private TaskMonitor taskMonitor = null;
@@ -154,7 +155,7 @@ public class MCODEAlgorithm {
 
         for (Iterator score = nodeScoreSortedMap.keySet().iterator(); score.hasNext();) {
             nodeScore = (Double) score.next();
-            ArrayList nodes = (ArrayList) nodeScoreSortedMap.get(nodeScore);
+			ArrayList nodes = (ArrayList) nodeScoreSortedMap.get(nodeScore);
             if (nodes.contains(new Integer(rootGraphIndex))) {
                 return nodeScore;
             }

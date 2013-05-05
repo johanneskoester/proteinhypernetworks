@@ -4,16 +4,12 @@
  */
 package logicProteinHypernetwork.analysis.complexes.mcode;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import logicProteinHypernetwork.analysis.complexes.Complex;
 import logicProteinHypernetwork.analysis.complexes.NetworkStateToSubnetwork;
 import logicProteinHypernetwork.analysis.complexes.ProteinSubnetwork;
 import logicProteinHypernetwork.analysis.complexes.SPINComplexPrediction;
 import logicProteinHypernetwork.analysis.complexes.SPINComplexRefinement;
-import proteinHypernetwork.proteins.Protein;
 
 /**
  *

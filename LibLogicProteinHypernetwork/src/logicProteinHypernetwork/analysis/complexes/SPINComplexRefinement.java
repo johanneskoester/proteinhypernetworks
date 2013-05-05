@@ -6,20 +6,22 @@
  */
 package logicProteinHypernetwork.analysis.complexes;
 
-import edu.uci.ics.jung.algorithms.filters.FilterUtils;
-import edu.uci.ics.jung.graph.util.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+
 import logicProteinHypernetwork.networkStates.MinimalNetworkState;
-import logicProteinHypernetwork.networkStates.minimalNetworkStatesToNetworkStates.MinimalNetworkStatesToNetworkStates;
 import logicProteinHypernetwork.networkStates.NetworkState;
+import logicProteinHypernetwork.networkStates.minimalNetworkStatesToNetworkStates.MinimalNetworkStatesToNetworkStates;
+
 import org.apache.commons.collections15.CollectionUtils;
 import org.apache.commons.collections15.Transformer;
+
 import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.interactions.Interaction;
 import proteinHypernetwork.proteins.Protein;
+import edu.uci.ics.jung.algorithms.filters.FilterUtils;
 
 /**
  * Refine complexes based on the SPIN approach.

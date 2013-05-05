@@ -7,8 +7,8 @@ package util.graphSummarization;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
+
 import org.apache.commons.collections15.SetUtils;
 
 /**

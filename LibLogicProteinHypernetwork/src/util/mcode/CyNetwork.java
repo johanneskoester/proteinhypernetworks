@@ -17,6 +17,7 @@ import java.util.Set;
  *
  * @author koester
  */
+@SuppressWarnings( { "rawtypes", "unchecked" } )
 public class CyNetwork<V, E> implements GraphPerspective {
 
     private UndirectedGraph<V, E> graph;
