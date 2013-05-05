@@ -51,6 +51,9 @@ public class CLI {
 	
 	@Parameter(names = { "-mc", "--min-complexes" }, description = "Minimum number of complexes that have to contain a pair of proteins for truth table prediction.")
 	private int minTTComplexes = 3;
+	
+	@Parameter(names = { "-mo", "--min-observations" }, description = "Minimum number of observations for a line in a predicted truth table to be counted as 1.")
+	private int minObservations = 0;
 
 	@Parameter(names = { "-t", "--threads" }, description = "Number of threads to use (1 per default).")
 	private int threads = 1;
@@ -66,6 +69,9 @@ public class CLI {
 	
 	@Parameter(names = { "-ptb", "--perturbations" }, description = "Proteins to perturb.")
 	private List<String> perturbations = new ArrayList<String>();
+	
+	@Parameter(names = { "-r", "--reconstruct" }, description = "Load a truth table with protein interactions as variables and reconstruct the interaction dependencies.")
+	private String truthTable;
 
 	public static void main(String[] args) {
 		CLI cli = new CLI();
@@ -75,7 +81,7 @@ public class CLI {
 			jc.usage();
 			System.exit(0);
 		}
-		if (!(cli.predictComplexes || cli.predictTruthTables || cli.predictPIS || cli.predictSimilarity || cli.predictPerturbationEffects)) {
+		if (!(cli.predictComplexes || cli.predictTruthTables || cli.predictPIS || cli.predictSimilarity || cli.predictPerturbationEffects || cli.truthTable != null)) {
 			jc.usage();
 			System.exit(1);
 		}
@@ -92,64 +98,70 @@ public class CLI {
 
 		String output = cli.parameters.get(0);
 
-		BufferedWriter outstream = null;
-		if (output.equals("-")) {
-			outstream = new BufferedWriter(new OutputStreamWriter(System.out));
-		} else {
-			try {
-				outstream = new BufferedWriter(new FileWriter(output));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
-
 		Controller.getInstance().setThreads(cli.threads);
-
-		if (cli.predictComplexes || cli.predictPIS || cli.predictSimilarity || cli.predictPerturbationEffects) {
-			File inputFile = new File(cli.hypernetwork);
-			try {
-				Controller.getInstance().loadHypernetwork(inputFile);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(1);
-			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(1);
-			} catch (InvalidFormulaException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-
-			try {
-				if (cli.predictComplexes) {
-					Controller.getInstance().predictComplexes(outstream);
-				} else if (cli.predictPIS) {
-					Controller.getInstance().predictPIS(outstream);
-				} else if (cli.predictSimilarity) {
-					Controller.getInstance().predictFunctionalSimilarities(
-							outstream);
-				} else if (cli.predictPerturbationEffects) {
-					Controller.getInstance().predictPerturbationEffects(cli.perturbations, outstream);
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				System.err.println(e.getMessage());
-				System.exit(1);
-			} catch(UnknownEntityException e) {
-				System.err.println(e.getMessage());
-				System.exit(1);
-			}
-		}
-		else if (cli.predictTruthTables) {
+		if (cli.predictTruthTables) {
 			if(output.equals("-")) {
 				jc.usage();
 				System.exit(1);
 			}
-			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, new File(output), cli.minTTComplexes);
+			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, new File(output), cli.minTTComplexes, cli.minObservations);
+		}else{ // predictTruthTables needs a path to a directory, all other methods need an outstram
+			BufferedWriter outstream = null;
+			if (output.equals("-")) {
+				outstream = new BufferedWriter(new OutputStreamWriter(System.out));
+			} else {
+				try {
+					outstream = new BufferedWriter(new FileWriter(output));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.exit(1);
+				}
+			} 			
+			if (cli.predictComplexes || cli.predictPIS || cli.predictSimilarity || cli.predictPerturbationEffects) {
+				File inputFile = new File(cli.hypernetwork);
+				try {
+					Controller.getInstance().loadHypernetwork(inputFile);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.exit(1);
+				} catch (XMLStreamException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.exit(1);
+				} catch (InvalidFormulaException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
+	
+				try {
+					if (cli.predictComplexes) {
+						Controller.getInstance().predictComplexes(outstream);
+					} else if (cli.predictPIS) {
+						Controller.getInstance().predictPIS(outstream);
+					} else if (cli.predictSimilarity) {
+						Controller.getInstance().predictFunctionalSimilarities(
+								outstream);
+					} else if (cli.predictPerturbationEffects) {
+						Controller.getInstance().predictPerturbationEffects(cli.perturbations, outstream);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					System.err.println(e.getMessage());
+					System.exit(1);
+				} catch(UnknownEntityException e) {
+					System.err.println(e.getMessage());
+					System.exit(1);
+				}
+			}else if (cli.truthTable != null){
+				try {
+					Controller.getInstance().reconstructInteractionDependencies(cli.truthTable, outstream);
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+					e.printStackTrace();
+				}
+			}
 		}
 		System.exit(0);
 	}

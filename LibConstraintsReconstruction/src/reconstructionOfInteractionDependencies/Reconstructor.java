@@ -275,7 +275,6 @@ public class Reconstructor {
 			BufferedReader reader = new BufferedReader(new FileReader(path));
 			String line;
 			ArrayList<Term> terms = new ArrayList<Term>();
-			
 			// first line contains names of the interactions, which later become the literalNames
 			String interactions = reader.readLine();			
 			int i = 0;
@@ -284,11 +283,20 @@ public class Reconstructor {
 			while(tokenizer.hasMoreTokens()){
 				literalNames[i] = tokenizer.nextToken();
 				i++;
-			}							
+			}				
+			reader.mark(0);
+			int lineCounter = 0;
+			// counting the number of lines in the table 
+			while((line = reader.readLine()) != null){
+				lineCounter++;
+			}
+			reader.reset();
+			double numberOfVariables = (Math.log(lineCounter)/Math.log(2));
+						
 			// line by line processing of the table
 			while((line = reader.readLine()) != null){
 				String lastToken = lastToken(line);
-				double last = Double.parseDouble(lastToken(line));
+				double last = Double.parseDouble(lastToken);
 				String lineWithoutLast = line.substring(0, line.lastIndexOf(lastToken));
 				// if the last token is counted as 0, we discard the line 
 				if (last >= 0 && last < threshold){

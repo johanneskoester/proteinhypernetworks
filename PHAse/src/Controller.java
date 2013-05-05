@@ -20,11 +20,13 @@ import logicProteinHypernetwork.analysis.complexes.Complex;
 import logicProteinHypernetwork.analysis.functionalSimilarity.FunctionalSimilarityOutputStream;
 import logicProteinHypernetwork.analysis.perturbationEffects.PerturbationEffect;
 import logicProteinHypernetwork.analysis.pis.PIS;
+import modalLogic.formula.Formula;
 import modalLogic.formula.io.InvalidFormulaException;
 import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.ProteinHypernetwork;
 import proteinHypernetwork.decoder.HypernetworkMLDecoder;
 import proteinHypernetwork.exceptions.UnknownEntityException;
+import reconstructionOfInteractionDependencies.Reconstructor;
 import reconstructionOfInteractionDependencies.TruthTablePrediction;
 
 /**
@@ -102,13 +104,20 @@ public class Controller {
 		writer.close();
 	}
 	
-	public void predictTruthTables(String network, String complexes, File destination, int minComplexes) {
+	public void predictTruthTables(String network, String complexes, File destination, int minComplexes, int minObservations) {
 		if(!destination.exists()) {
 			destination.mkdir();
-		}
+		} 
 		TruthTablePrediction ttp = new TruthTablePrediction(complexes, network, 10);
-		//ttp.printProteins();
-		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination.getPath(), minComplexes, 1);
-		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, 1);
+		// ttp.printProteins();
+		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations);
+		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations);
+	}
+	
+	public void reconstructInteractionDependencies(String truthTable, BufferedWriter writer) throws IOException{
+		Reconstructor reconstructor = new Reconstructor(-1);
+		Formula<String> formula = reconstructor.zeroLinesMethod(truthTable);
+		writer.write(formula.toString());
+		//TODO converting formula in MathMl
 	}
 }

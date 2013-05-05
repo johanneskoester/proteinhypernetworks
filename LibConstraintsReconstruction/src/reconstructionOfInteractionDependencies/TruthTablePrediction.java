@@ -16,13 +16,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import util.Counter;
 
 /**
@@ -38,23 +38,15 @@ public class TruthTablePrediction {
 
 	int tableCounter = 0;
 
-	/** Truth-values are the absolute numbers of observations */
-	final static int absoluteModus = 1;
-	/**
-	 * Truth-values are the quotient of the number of observations of one line
-	 * and the complete number of observations
-	 */
-	final static int relativeModus = 2;
-
 	/**
 	 * Constructor which reads the proteincomplexes, reduces the set of proteins
 	 * according to the threshold and reads the interactions of the remaining
 	 * proteins
 	 * 
 	 * @param pathComplexes
-	 *            - path to a PINdb-file containing the proteincomplexes
+	 *            - path a csv-file containing the proteincomplexes
 	 * @param pathInteractions
-	 *            - path to a BioGRID-file containing the interactions
+	 *            - path to a csv-file containing the interactions
 	 * @param thresholdProteins
 	 *            - threshold for the number of complexes a protein has to be in
 	 */
@@ -93,12 +85,12 @@ public class TruthTablePrediction {
 	}
 
 	/**
-	 * Reads a PINdb-file containing proteincomplexes. Stores each complex in a
-	 * list, and stores also each occurring protein in a HashMap with its name
-	 * as key.
+	 * Reads a csv-file containing proteincomplexes (1st column: complex id, 2nd column: protein name). 
+	 * Stores each complex in a list, and stores also each occurring protein in a HashMap 
+	 * with its name as key.
 	 * 
 	 * @param path
-	 *            - path to a PINdb-file containing the proteincomplexes
+	 *            - path to a csv-file containing the proteincomplexes
 	 */
 	private void readProteinComplexes(String path) {
 		complexes = new ArrayList<Proteincomplex>();
@@ -179,12 +171,11 @@ public class TruthTablePrediction {
 	}
 
 	/**
-	 * Reads a BIOGRID-file and stores for each protein we have read before each
-	 * interaction in an adjacency-list. Only physical interactions will be
-	 * stored.
+	 * Reads a csv-file (1st column: protein name, 2nd column: interacting protein name)
+	 * and stores for each protein we have read before each interaction in an adjacency-list.
 	 * 
 	 * @param path
-	 *            - path to a BIOGRID-file containing the protein-network in
+	 *            - path to a csv-file containing the protein-network in
 	 *            form of pairwise interactions
 	 */
 	private void readInteractions(String path) {
@@ -202,18 +193,15 @@ public class TruthTablePrediction {
 
 			// line by line processing of the file
 			while ((line = reader.readLine()) != null) {
-				int i = 0;
 				StringTokenizer tokenizer = new StringTokenizer(line, "\t");
 				// Columns 1 and 2 contain the names
-				proteinNameA = tokenizer.nextToken().toUpperCase(); // Column 1
+				proteinNameA = tokenizer.nextToken().toUpperCase(); // column 1
 				if (proteins.get(proteinNameA) != null) {
 					tempProteinA = proteins.get(proteinNameA);
-					proteinNameB = tokenizer.nextToken().toUpperCase(); // column
-																		// 2
+					proteinNameB = tokenizer.nextToken().toUpperCase(); // column 2
 					tempProteinB = proteins.get(proteinNameB);
 					if (tempProteinB != null
-							&& !tempProteinA.equals(tempProteinB)) { // ignore
-																		// self-interactions
+							&& !tempProteinA.equals(tempProteinB)) { // ignore self-interactions																		
 						tempProteinA.addInteraction(tempProteinB);
 						tempProteinB.addInteraction(tempProteinA);
 					}
@@ -241,11 +229,12 @@ public class TruthTablePrediction {
 	 * @param threshold
 	 *            - threshold in how much complexes at least two of the three
 	 *            proteins for each table have to be
-	 * @param modus
-	 *            - modus for calculating the truth-values
+	 * @param minObservations
+	 *            - Minimum number of observations for a line in a
+	 *            predicted truth table to be counted as 1
 	 */
 	public void predictTruthTablesWith2InteractionsFor3Proteins(
-			String pathDestination, int threshold, int modus) {
+			String pathDestination, int threshold, int minObservations) {
 		Collection<Protein> p = proteins.values();
 		Iterator<Protein> iterator = p.iterator();
 		while (iterator.hasNext()) {
@@ -267,7 +256,7 @@ public class TruthTablePrediction {
 						// Filling the truth-table for the three proteins
 						if (fillTruthTableFor3Proteins(p1, p2, p3, new File(
 								pathDestination, "table" + tableCounter
-										+ ".csv").getPath(), threshold, modus)) {
+										+ ".csv").getPath(), threshold, minObservations)) {
 							tableCounter++;
 						}
 					}
@@ -285,11 +274,12 @@ public class TruthTablePrediction {
 	 * @param threshold
 	 *            - threshold in how much complexes at least two of the three
 	 *            proteins for each table have to be
-	 * @param modus
-	 *            - modus for calculating the truth-values
+	 * @param minObservations
+	 *            - Minimum number of observations for a line in a 
+	 *            predicted truth table to be counted as 1
 	 */
 	public void predictTruthTablesWith3InteractionsFor3Proteins(
-			String pathDestination, int threshold, int modus) {
+			String pathDestination, int threshold, int minObservations) {
 		Collection<Protein> p = proteins.values();
 		Iterator<Protein> iterator = p.iterator();
 		while (iterator.hasNext()) {
@@ -320,7 +310,7 @@ public class TruthTablePrediction {
 								if (fillTruthTableFor3Proteins(p1, p2, p3,
 										new File(pathDestination, "table"
 												+ tableCounter + ".csv")
-												.getPath(), threshold, modus)) {
+												.getPath(), threshold, minObservations)) {
 									tableCounter++;
 								}
 							}
@@ -346,13 +336,14 @@ public class TruthTablePrediction {
 	 * @param minNumberOfComplexes
 	 *            - minimal number of complexes which contain at least two of
 	 *            the three proteins
-	 * @param modus
-	 *            - modus for calculating the truth-values
+	 * @param minObservations
+	 *            - Minimum number of observations for a line in a 
+	 *            predicted truth table to be counted as 1
 	 * @return true iff the truth-table was filled successfully and false
 	 *         otherwise
 	 */
 	public boolean fillTruthTableFor3Proteins(Protein p1, Protein p2,
-			Protein p3, String path, int minNumberOfComplexes, int modus) {
+			Protein p3, String path, int minNumberOfComplexes, int minObservations) {
 		ArrayList<Proteincomplex> complexList = getComplexesWithMin2Of3SpecifiedProteins(
 				p1, p2, p3);
 		String line = "";
@@ -435,7 +426,6 @@ public class TruthTablePrediction {
 				} else if (p3p1 && complex.contains2Proteins(p3, p1)) {
 					counts.plus1("0 1");
 				}
-
 			}
 		} else {
 			for (Proteincomplex complex : complexList) {
@@ -451,24 +441,58 @@ public class TruthTablePrediction {
 				} else if (complex.contains2Proteins(p3, p1)) {
 					counts.plus1("0 0 1");
 				}
-
 			}
 		}
 		Map<String, Integer> table = counts.getMap();
 
 		if (table.size() < 2) {
 			if(!table.containsKey("1 1")) {
-				System.out.println("Observed only one interaction.");
+				//System.out.println("Observed only one interaction."); TODO wieder einkommentieren
 				return false;
 			}
-		}else if(table.size() == (1 << numberOfVariables) - 1) {
-			// complete table 
-			// TODO skip this once we have a sophisticated threshold method
 		}
-
-		// end
-
-		header = header + "observed-" + numberOfObservations;
+		// calculating the threshold for the truthValues
+		// the threshold partitions the values where the difference 
+		// of the means of the two partitions reaches the maximum
+		Collection<Integer> observations = table.values();
+		Integer[] observationsAsArray = new Integer[observations.size()+1];
+		observationsAsArray = observations.toArray(new Integer[0]);
+		Arrays.sort(observationsAsArray);
+		double maxMeanDifference = 0; // storing the actual maximum difference between the means
+		int counter = 0; // counting the elements in the partitions
+		int marker = 0; // marking the actual position for partitioning with the threshold
+		for (int i = 0; i < observationsAsArray.length; i++) {
+			double temp1 = 0;
+			double temp2 = 0;			
+			// summing up the first part of the values
+			for (int j = 0; j < i; j++) {
+				temp1 += observationsAsArray[j];
+				counter++;
+			}
+			if (counter != 0) { // calculating the mean for the first partition
+				temp1 = temp1 / counter;
+				counter = 0;
+			}
+			// summing up the second part of the values
+			for (int k = i; k < observationsAsArray.length; k++) {
+				temp2 += observationsAsArray[k];
+				counter++;
+			}
+			if (counter != 0) { // calculating the mean for the second partition
+				temp2 = temp2 / counter;
+				counter = 0;
+			}
+			if ((temp2 - temp1) > maxMeanDifference) {
+				maxMeanDifference = (temp2 - temp1);
+				marker = i;
+			}
+			// System.out.print(observationsAsArray[i] + " ");
+		}
+		marker = observationsAsArray[marker]; // every value >= marker is counted as 1, lower values as 0
+		//System.out.print( "threshold " + marker);
+		//System.out.println();		
+				
+		header = header + "truthValue(T=" + Math.max(marker, minObservations) + ") " + "observed(" + numberOfObservations + ")";
 		try { // Writing the table into a file
 			FileWriter fstream = new FileWriter(path);
 			BufferedWriter writer = new BufferedWriter(fstream);
@@ -479,14 +503,10 @@ public class TruthTablePrediction {
 			while (iterator.hasNext()) {
 				String temp = (String) iterator.next();
 				int absoluteValue = table.get(temp);
-				if (modus == relativeModus) {
-					float relativeValue = (float) absoluteValue
-							/ (float) numberOfObservations;
-					// Writing the truth-value as quotient of the occurences and
-					// the number of complexes
-					writer.write(temp + " " + relativeValue);
-				} else if (modus == absoluteModus) {
-					writer.write(temp + " " + absoluteValue);
+				if (absoluteValue >= minObservations && absoluteValue >= marker) {
+					writer.write(temp + " 1 " + absoluteValue);
+				}else{
+					writer.write(temp + " 0 " + absoluteValue);
 				}
 				writer.newLine();
 			}
@@ -509,9 +529,9 @@ public class TruthTablePrediction {
 				line = line.trim();
 				if (table.get(line) == null) {
 					if (j == 0) {
-						line = line + " 1";
+						line = line + " 1 0";
 					} else {
-						line = line + " 0";
+						line = line + " 0 0";
 					}
 					writer.write(line);
 					if (j < numberOfLines - 1) {
@@ -549,8 +569,7 @@ public class TruthTablePrediction {
 				reducedComplexList.add(tempComplex);
 			}
 		}
-		// System.out.println("Number of Complexes: " +
-		// reducedComplexList.size());
+		// System.out.println("Number of Complexes: " + reducedComplexList.size());
 		return reducedComplexList;
 	}
 
@@ -578,8 +597,7 @@ public class TruthTablePrediction {
 				reducedComplexList.add(tempComplex);
 			}
 		}
-		// System.out.println("Number of Complexes: " +
-		// reducedComplexList.size());
+		// System.out.println("Number of Complexes: " + reducedComplexList.size());
 		return reducedComplexList;
 	}
 
