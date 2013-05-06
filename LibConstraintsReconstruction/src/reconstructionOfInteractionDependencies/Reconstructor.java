@@ -28,9 +28,11 @@ import modalLogic.formula.factory.FormulaFactory;
 //import quineMcCluskey.Formula;
 import quineMcCluskey.Term;
 
+import com.csvreader.*;
+
 
 /**
- * Class for reconstructing interaction dependencies between proteininteractions. For a given truth-table the represented formula in SINF is calculated. 
+ * Class for reconstructing interaction dependencies between proteininteractions. For a given truth table the represented formula in SINF is calculated. 
  * Furthermore there are additional methods for manipulation of propositional logic formulas. 
  * @author Bianca Patro
  *
@@ -79,40 +81,25 @@ public class Reconstructor {
 	}
 	
 	
-	
 	/**
-	 * Checks the input if it leads to a valid truth-table, then executes the 1-lines-method and after that the 0-lines-method
-	 * and gives output about the formula-sizes for comparing the methods. 
-	 * In addition the reduction methods are also executed and evaluated. <br>
-	 * This method should be called with log-level 0, because all relevant output is written at this level. 
-	 * For default all entries with a truth-value truly greater than zero are counted as one.
-	 * @param path - path to a file with a truth-table	 
-	 */	
-	public void compareBothMethods(String path){
-		compareBothMethods(path, thresholdAllGreaterZero); 
-	}
-	
-	
-	/**
-	 * Checks the input if it leads to a valid truth-table, then executes the 1-lines-method and after that the 0-lines-method
+	 * Checks the input if it leads to a valid truth table, then executes the 1-lines-method and after that the 0-lines-method
 	 * and gives output about the formula-sizes for comparing the methods. 
 	 * In addition the reduction methods are also executed and evaluated. <br>
 	 * This method should be called with log-level 0, because all relevant output is written at this level.	
-	 * @param path - path to a file with a truth-table
-	 * @param threshold - limit to check whether a entry is counted as 1 or 0
+	 * @param path - path to a file with a truth table
 	 */	
 	@SuppressWarnings("unchecked")
-	public void compareBothMethods(String path, double threshold){
+	public void compareBothMethods(String path){
 		if (!checkInputTruthTable(path)){
 			throw new IllegalArgumentException("Invalid Thruth-Table!");
 		}
 		log.printMessage(0,"> " + path + "\n");
 		log.printMessage(0, "1\t");
-		quineMcCluskey.Formula quineFormula1 = readOnly1LinesFromTruthtableToFormula(path, threshold);
+		quineMcCluskey.Formula quineFormula1 = readOnly1LinesFromTruthtableToFormula(path);
 		long start = System.currentTimeMillis();
 		Formula<String> formula1;
 		if (quineFormula1 != null){
-			log.printMessage(10, "Formula represented through truth-table: \n" + quineFormula1.toString() + "\n");
+			log.printMessage(10, "Formula represented through truth table: \n" + quineFormula1.toString() + "\n");
 			quineFormula1 = executeQuineMcCluskey(quineFormula1);
 			formula1  = from1LinesQuineMcCluskeyFormulaToLibModallogicFormulaInDNF(quineFormula1, literalNames);
 		}else{
@@ -159,11 +146,11 @@ public class Reconstructor {
 		
 		
 		log.printMessage(0, "0\t");
-		quineMcCluskey.Formula quineFormula0 = readOnly0LinesFromTruthtableToFormula(path, threshold);
+		quineMcCluskey.Formula quineFormula0 = readOnly0LinesFromTruthtableToFormula(path);
 		start = System.currentTimeMillis();
 		Formula<String> formula0;
 		if (quineFormula0 != null){
-			log.printMessage(10, "Formula represented through truth-table: \n" + quineFormula0.toString() + "\n");
+			log.printMessage(10, "Formula represented through truth table: \n" + quineFormula0.toString() + "\n");
 			quineFormula0 = executeQuineMcCluskey(quineFormula0);
 			log.printMessage(8, "Formula after executing complete Quine-McCluskey: \n" + quineFormula0.toString() +"\n");
 			formula0  = from0LinesQuineMcCluskeyFormulaToLibModallogicFormulaInCNF(quineFormula0, literalNames);
@@ -210,46 +197,28 @@ public class Reconstructor {
 	
 		
 //------------------------------------------------------------------------------
-// Method 1: from 1-lines in truth-table to with Quine-McCluskey minimised DNF
+// Method 1: from 1-lines in truth table to with Quine-McCluskey minimised DNF
 //	to CNF to SINF
 	
+
 	/**
-	 * Gets a path to a truth-table and executes all steps of the 1-lines-method without reducing the formula:
-	 * Reading the 1-lines of the truth-table and executing the Quine-McCluskey on it. Transforming the resulting DNF
-	 * into CNF and after that into SINF. <br>
-	 * For default all entries with a truth-value truly greater than zero are counted as one.
-	 * @param path - path to a file with a truth-table
-	 * @return the formula represented through the truth-table in SINF
-	 */
-	public Formula<String> oneLinesMethod(String path){
-		return oneLinesMethod(path, thresholdAllGreaterZero);
-	}
-	
-	
-	/**
-	 * Gets a path to a truth-table and executes all steps of the 1-lines-method without reducing the formula:
-	 * Reading the 1-lines of the truth-table and executing the Quine-McCluskey on it. Transforming the resulting DNF
+	 * Gets a path to a truth table and executes all steps of the 1-lines-method without reducing the formula:
+	 * Reading the 1-lines of the truth table and executing the Quine-McCluskey on it. Transforming the resulting DNF
 	 * into CNF and after that into SINF.
-	 * @param path - path to a file with a truth-table
-	 * @param threshold - limit to check whether a entry is counted as 1 or 0
-	 * @return the formula represented through the truth-table in SINF
+	 * @param path - path to a file with a truth table
+	 * @return the formula represented through the truth table in SINF
 	 */
 	@SuppressWarnings("unchecked")
-	public Formula<String> oneLinesMethod(String path, double threshold){
+	public Formula<String> oneLinesMethod(String path){
 		if (!checkInputTruthTable(path)){
 			throw new IllegalArgumentException("Invalid Thruth-Table!");
 		}
 		log.printMessage(0,"> " + path + "\n");
 		log.printMessage(0, "1-lines-method\n");
-		if (threshold == thresholdAllGreaterZero){
-			log.printMessage(0, "Default-Threshold, all values greater zero are counted as one.\n");
-		}else{
-			log.printMessage(0, "Threshold: " + threshold + "\n"); 
-		}
-		quineMcCluskey.Formula quineFormula = readOnly1LinesFromTruthtableToFormula(path, threshold);
+		quineMcCluskey.Formula quineFormula = readOnly1LinesFromTruthtableToFormula(path);
 		Formula<String> formula;
 		if (quineFormula != null){
-			log.printMessage(10, "Formula represented through truth-table: \n" + quineFormula.toString() + "\n");
+			log.printMessage(10, "Formula represented through truth table: \n" + quineFormula.toString() + "\n");
 			quineFormula = executeQuineMcCluskey(quineFormula);
 			
 			formula  = from1LinesQuineMcCluskeyFormulaToLibModallogicFormulaInDNF(quineFormula, literalNames);
@@ -261,61 +230,79 @@ public class Reconstructor {
 		log.printMessage(1, getNumberOfImplications(formulaInSINF) + "\n");
 		return formulaInSINF;
 	}
+
 	
 	/**
-	 * Reads the truth-table, stores only the lines with last entry '1' 
-	 * and parses the boolean formula represented through the truth-table.
-	 * @param  path - path to a .csv-file containing a truth-table
-	 * @param threshold - threshold whether an entry is counted as 1 or 0
-	 * @return the formula represented through the truth-table (in the Quine-McCluskey-Formula-Format)
+	 * Reads the truth table, stores only the lines with truth value '1' 
+	 * and parses the boolean formula represented through the truth table.
+	 * @param  path - path to a .csv-file containing a truth table
+	 * @return the formula represented through the truth table (in the Quine-McCluskey-Formula-Format)
 	 */
-	public quineMcCluskey.Formula readOnly1LinesFromTruthtableToFormula(String path, double threshold){
+	public quineMcCluskey.Formula readOnly1LinesFromTruthtableToFormula(String path){
 		quineMcCluskey.Formula formula = null;
 		try {			
-			BufferedReader reader = new BufferedReader(new FileReader(path));
-			String line;
-			ArrayList<Term> terms = new ArrayList<Term>();
-			// first line contains names of the interactions, which later become the literalNames
-			String interactions = reader.readLine();			
-			int i = 0;
-			StringTokenizer tokenizer = new StringTokenizer(interactions, " \t");
-			literalNames = new String[tokenizer.countTokens()];
-			while(tokenizer.hasMoreTokens()){
-				literalNames[i] = tokenizer.nextToken();
-				i++;
-			}				
-			reader.mark(0);
+			BufferedReader lineReader = new BufferedReader(new FileReader(path));
 			int lineCounter = 0;
 			// counting the number of lines in the table 
-			while((line = reader.readLine()) != null){
+			while(lineReader.readLine() != null){
 				lineCounter++;
 			}
-			reader.reset();
-			double numberOfVariables = (Math.log(lineCounter)/Math.log(2));
-						
-			// line by line processing of the table
-			while((line = reader.readLine()) != null){
-				String lastToken = lastToken(line);
-				double last = Double.parseDouble(lastToken);
-				String lineWithoutLast = line.substring(0, line.lastIndexOf(lastToken));
-				// if the last token is counted as 0, we discard the line 
-				if (last >= 0 && last < threshold){
-					continue;
-				} else if (last >= threshold && last <= 1){
-					Term term = parseTerm(lineWithoutLast);
-					if (term != null){
-						terms.add(term);
-					}
+			lineReader.close();
+			// calculating the number of variables
+			double numberOfVariables = (Math.log(lineCounter-1)/Math.log(2));
+			CsvReader reader;
+			// determining whether the table has whitespace or tabs as delimiters
+			CsvReader readerTab = new CsvReader(path, '\t');
+			readerTab.readHeaders();
+			if(readerTab.getHeaderCount() < numberOfVariables+1){
+				readerTab.close();
+				CsvReader readerSpace = new CsvReader(path, ' ');
+				readerSpace.readHeaders();
+				if(readerSpace.getHeaderCount() < numberOfVariables+1){
+					readerSpace.close();
+					throw new IllegalArgumentException("Invalid truth table");
 				}else{
-					System.out.println("Invalid truth-table");
-					System.exit(-1);
-				}								
+					reader = readerSpace;
+				}
+			}else{
+				reader = readerTab;
 			}
+			// first line contains names of the interactions, which later become the literalNames
+			literalNames = reader.getHeaders();
+			ArrayList<Term> terms = new ArrayList<Term>();
+			// line by line processing of the table
+			while(reader.readRecord()){
+				// if the truth value is 0, we discard the line 
+				if (reader.get((int) numberOfVariables).equals("0")){
+					continue;
+				} else{ // otherwise we parse the term representing the current line
+					ArrayList<Byte> t = new ArrayList<Byte>();
+					String temp;
+					for (int i = 0; i < numberOfVariables; i++){
+						temp = reader.get(i);
+						if (temp.equals("0")) {
+			                t.add((byte)0);
+			            } else if (temp.equals("1")) {
+			                t.add((byte)1);
+			            }else{
+			            	throw new IllegalArgumentException("Invalid truth table - only entrys '0' and '1' are allowed.");
+						}
+			        }
+			        if (t.size() > 0) {
+			            byte[] resultBytes = new byte[t.size()];
+			            for(int i = 0; i < t.size(); i++) {
+			                resultBytes[i] = (byte)t.get(i);
+			            }
+						terms.add(new Term(resultBytes));
+					}else{
+						throw new IllegalArgumentException("Invalid truth table");
+					}
+				}
+			} 
 			if (terms.size() != 0){
 				formula = new quineMcCluskey.Formula(terms);
 			}else{
 //				System.out.println("Error because of Nullfunction. Only lines with last entry '1' are stored.");
-//				System.exit(-1);
 				return null;
 			}
 			reader.close();
@@ -326,11 +313,14 @@ public class Reconstructor {
 		} catch (IOException e) {
 			System.out.println("Error while reading the file.");
 			e.printStackTrace();
+			System.exit(-1);		
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 			System.exit(-1);
-		}		
+		}	
 		return formula;
 	}
-
+	
 	
 	/**
 	 * Executes the complete QuineMcCluskey-Algorithm on a formula.
@@ -346,8 +336,8 @@ public class Reconstructor {
 	}
 	
 	/**
-	 * Returns the names of the literals after reading a truth-table.
-	 * @return the names of the literals after reading a truth-table
+	 * Returns the names of the literals after reading a truth table.
+	 * @return the names of the literals after reading a truth table
 	 */
 	public String[] getLiteralNames() {
 		return literalNames;
@@ -775,45 +765,28 @@ public class Reconstructor {
 	
 	
 //------------------------------------------------------------------------------
-// Method 0: from 0-lines in truth-table to with Quine-McCluskey minimised CNF to SINF
+// Method 0: from 0-lines in truth table to with Quine-McCluskey minimised CNF to SINF
 //
-		
-	/**
-	 * Gets a path to a truth-table and executes all steps of the 0-lines-method without reducing the formula:
-	 * Reading the 0-lines of the truth-table and executing the Quine-McCluskey on it. Transforming the resulting CNF
-	 * into SINF. For default all entries with a truth-value truly greater than zero are counted as one.
-	 * @param path - path to a file with a truth-table
-	 * @return the formula represented through the truth-table in SINF
-	 */	
-	public Formula<String> zeroLinesMethod(String path){
-		return zeroLinesMethod(path, thresholdAllGreaterZero);
-	}
 	
 	
 	/**
-	 * Gets a path to a truth-table and executes all steps of the 0-lines-method without reducing the formula:
-	 * Reading the 0-lines of the truth-table and executing the Quine-McCluskey on it. Transforming the resulting CNF
+	 * Gets a path to a truth table and executes all steps of the 0-lines-method without reducing the formula:
+	 * Reading the 0-lines of the truth table and executing the Quine-McCluskey on it. Transforming the resulting CNF
 	 * into SINF.
-	 * @param path - path to a file with a truth-table
-	 * @param threshold - limit to check whether a entry is counted as 1 or 0
-	 * @return the formula represented through the truth-table in SINF
+	 * @param path - path to a file with a truth table
+	 * @return the formula represented through the truth table in SINF
 	 */	
 	@SuppressWarnings("unchecked")
-	public Formula<String> zeroLinesMethod(String path, double threshold){
+	public Formula<String> zeroLinesMethod(String path){
 		if (!checkInputTruthTable(path)){
 			throw new IllegalArgumentException("Invalid Thruth-Table!");
 		}
 		log.printMessage(0,"> " + path + "\n");
 		log.printMessage(0, "0-lines-method\n");
-		if (threshold == thresholdAllGreaterZero){
-			log.printMessage(0, "Default-Threshold, all values greater zero are counted as one.\n");
-		}else{
-			log.printMessage(0, "Threshold: " + threshold + "\n");
-		}
-		quineMcCluskey.Formula quineFormula = readOnly0LinesFromTruthtableToFormula(path, threshold);
+		quineMcCluskey.Formula quineFormula = readOnly0LinesFromTruthtableToFormula(path);
 		Formula<String> formula;
 		if (quineFormula != null){
-			log.printMessage(10, "Formula represented through truth-table: \n" + quineFormula.toString());
+			log.printMessage(10, "Formula represented through truth table: \n" + quineFormula.toString());
 			quineFormula = executeQuineMcCluskey(quineFormula);
 			formula  = from0LinesQuineMcCluskeyFormulaToLibModallogicFormulaInCNF(quineFormula, literalNames);
 		}else{
@@ -825,66 +798,94 @@ public class Reconstructor {
 
 	}
 	
-
 	/**
-	 * Reads the truth-table, stores only the lines with last entry '0' 
-	 * and parses the boolean formula represented through the truth-table.
-	 * @param path - path to a .csv-file containing a truth-table
-	 * @return the formula represented through the truth-table (in the Quine-McCluskey-Formula-Format)
+	 * Reads the truth table, stores only the lines with last entry '0' 
+	 * and parses the boolean formula represented through the truth table.
+	 * @param path - path to a .csv-file containing a truth table
+	 * @return the formula represented through the truth table (in the Quine-McCluskey-Formula-Format)
 	 */
-	public quineMcCluskey.Formula readOnly0LinesFromTruthtableToFormula(String path, double threshold){
+	public quineMcCluskey.Formula readOnly0LinesFromTruthtableToFormula(String path){
 		quineMcCluskey.Formula formula = null;
 		try {			
-			BufferedReader reader = new BufferedReader(new FileReader(path));
-			String line;
-			ArrayList<Term> terms = new ArrayList<Term>();
-			
-			// first line contains names of the interactions, which later become the literalNames
-			String interactions = reader.readLine();			
-			int i = 0;
-			StringTokenizer tokenizer = new StringTokenizer(interactions, " \t");
-			literalNames = new String[tokenizer.countTokens()];
-			while(tokenizer.hasMoreTokens()){
-				literalNames[i] = tokenizer.nextToken();
-				i++;
-			}	
-						
-			// line by line processing of the table
-			while((line = reader.readLine()) != null){
-				String lastToken = lastToken(line);
-				double last = Double.parseDouble(lastToken(line));
-				String lineWithoutLast = line.substring(0, line.lastIndexOf(lastToken));
-				// if the last token is counted as 1, we discard the line 
-				if (last >= threshold && last <= 1){
-					continue;
-				} else if (last >= 0 && last < threshold){
-					Term term = parseTerm(lineWithoutLast);
-					if (term != null){
-						terms.add(term);
-					}
+			BufferedReader lineReader = new BufferedReader(new FileReader(path));
+			int lineCounter = 0;
+			// counting the number of lines in the table 
+			while(lineReader.readLine() != null){
+				lineCounter++;
+			}
+			lineReader.close();
+			// calculating the number of variables
+			double numberOfVariables = (Math.log(lineCounter-1)/Math.log(2));
+			CsvReader reader;
+			// determining whether the table has whitespace or tabs as delimiters
+			CsvReader readerTab = new CsvReader(path, '\t');
+			readerTab.readHeaders();
+			if(readerTab.getHeaderCount() < numberOfVariables+1){
+				readerTab.close();
+				CsvReader readerSpace = new CsvReader(path, ' ');
+				readerSpace.readHeaders();
+				if(readerSpace.getHeaderCount() < numberOfVariables+1){
+					readerSpace.close();
+					throw new IllegalArgumentException("Invalid truth table");
 				}else{
-					System.out.println("Invalid truth-table");
-					System.exit(-1);
-				}								
-			}							
+					reader = readerSpace;
+				}
+			}else{
+				reader = readerTab;
+			}
+			// first line contains names of the interactions, which later become the literalNames
+			literalNames = reader.getHeaders();
+			ArrayList<Term> terms = new ArrayList<Term>();
+			// line by line processing of the table
+			while(reader.readRecord()){
+				// if the truth value is 1, we discard the line 
+				if (reader.get((int) numberOfVariables).equals("1")){
+					continue;
+				} else{ // otherwise we parse the term representing the current line
+					ArrayList<Byte> t = new ArrayList<Byte>();
+					String temp;
+					for (int i = 0; i < numberOfVariables; i++){
+						temp = reader.get(i);
+						if (temp.equals("0")) {
+			                t.add((byte)0);
+			            } else if (temp.equals("1")) {
+			                t.add((byte)1);
+			            }else{
+			            	throw new IllegalArgumentException("Invalid truth table - only entrys '0' and '1' are allowed.");
+						}
+			        }
+			        if (t.size() > 0) {
+			            byte[] resultBytes = new byte[t.size()];
+			            for(int i = 0; i < t.size(); i++) {
+			                resultBytes[i] = (byte)t.get(i);
+			            }
+						terms.add(new Term(resultBytes));
+					}else{
+						throw new IllegalArgumentException("Invalid truth table");
+					}
+				}
+			} 
 			if (terms.size() != 0){
 				formula = new quineMcCluskey.Formula(terms);
 			}else{
-//					System.out.println("Error because of Onefunction. Only lines with last entry '0' are stored.");
-//					System.exit(-1);
+//				System.out.println("Error because of Onefunction. Only lines with last entry '0' are stored.");
 				return null;
-			}	
+			}
 			reader.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found! Please check spelling and path of the file.");
-//				e.printStackTrace();
+//			e.printStackTrace();
 			System.exit(-1); 
 		} catch (IOException e) {
 			System.out.println("Error while reading the file.");
-//				e.printStackTrace();
+			e.printStackTrace();
+			System.exit(-1);		
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 			System.exit(-1);
-		}		
+		}	
 		return formula;
+		
 	}
 
 	
@@ -956,8 +957,8 @@ public class Reconstructor {
 	
 	
 	/**
-	 * Calculates up to two different thresholds for the given truth-table.
-	 * @param path - path to a file with a truth-table
+	 * Calculates up to two different thresholds for the given truth table.
+	 * @param path - path to a file with a truth table
 	 * @return a ArrayList containing the suggested thresholds and a description of the thresholds
 	 */
  	public ArrayList<PairDoubleString>suggestThresholdsForTruthTable(String path){
@@ -1042,12 +1043,12 @@ public class Reconstructor {
 	
 	
 	/**
- 	 * Checks if the path leads to a valid truth-table. A truth-table is valid, 
+ 	 * Checks if the path leads to a valid truth table. A truth table is valid, 
  	 * when there are no duplicate lines, each line has the same number of tokens, 
  	 * and the table is complete, i.e. the number of lines is 2^(numberOfVariables+1)
  	 * (The content of the table (only 0 and 1) is not tested in this method, but when the table is parsed.)
- 	 * @param path - path to a truth-table in a .csv-file
- 	 * @return true iff the truth-table is valid, otherwise a IllegalArgumentException is thrown
+ 	 * @param path - path to a truth table in a .csv-file
+ 	 * @return true iff the truth table is valid, otherwise a IllegalArgumentException is thrown
  	 */
  	public boolean checkInputTruthTable(String path){
  		try {			
@@ -1066,13 +1067,13 @@ public class Reconstructor {
 				tokenizer = new StringTokenizer(line);
 				// test if the line has the correct number of tokens
 				if(tokenizer.countTokens() != numberOfColumns){
-					throw new IllegalArgumentException("Invalid truth-table - there is a line with the wrong number of tokens.");
+					throw new IllegalArgumentException("Invalid truth table - there is a line with the wrong number of tokens.");
 				}
 				String lastToken = lastToken(line);
 				String lineWithoutLast = line.substring(0, line.lastIndexOf(lastToken));
 				// test if a line has a duplicate 
 				if (testMap.get(lineWithoutLast) != null){
-					throw new IllegalArgumentException("Invalid truth-table - there are duplicate lines in the table.");
+					throw new IllegalArgumentException("Invalid truth table - there are duplicate lines in the table.");
 				}else{
 					testMap.put(lineWithoutLast, lastToken);
 				}
@@ -1080,7 +1081,7 @@ public class Reconstructor {
 			}
 			// test if the table has the correct number of lines
 			if(lineCounter.intValue() != ((1 << (numberOfColumns -1))+1)){
-				throw new IllegalArgumentException("Invalid truth-table - the table has the wrong numer of lines.");
+				throw new IllegalArgumentException("Invalid truth table - the table has the wrong numer of lines.");
 			}
 			reader.close();
 		} catch (FileNotFoundException e) {
@@ -1207,9 +1208,9 @@ public class Reconstructor {
 		HashMap<String, Boolean> logicalValues = new HashMap<String, Boolean>();
 		// 2^b = 1 << b
 		// because of BigEndian it works in this order: 000-100-010-110-001-101-011-111 
-		BigInteger lineCounter = new BigInteger("0"); // counts tested lines of the truth-table
+		BigInteger lineCounter = new BigInteger("0"); // counts tested lines of the truth table
 		for (int i = 0; i < (1 << numberOfVariables); i++){
-			// for each line of the truth-table we put the configurations of logical values in a HashMap
+			// for each line of the truth table we put the configurations of logical values in a HashMap
 			logicalValues.clear();
 			for (int j = 0; j < numberOfVariables; j++){
 				if (j < lineCounter.bitLength()){
@@ -1255,9 +1256,9 @@ public class Reconstructor {
 		HashMap<String, Boolean> logicalValues = new HashMap<String, Boolean>();
 		// 2^b = 1 << b
 		// because of BigEndian it works in this order: 000-100-010-110-001-101-011-111 
-		BigInteger lineCounter = new BigInteger("0"); // counts tested lines of the truth-table
+		BigInteger lineCounter = new BigInteger("0"); // counts tested lines of the truth table
 		for (int i = 0; i < (1 << numberOfVariables); i++){
-			// for each line of the truth-table we put the configurations of logical values in a HashMap
+			// for each line of the truth table we put the configurations of logical values in a HashMap
 			logicalValues.clear();
 			for (int j = 0; j < numberOfVariables; j++){
 				if (j < lineCounter.bitLength()){
@@ -1488,37 +1489,7 @@ public class Reconstructor {
 		return temp;
 	}
  	
-	 	
-	/**
-	 * Parses a term from a line of the truth-table.
-	 * @param text - text to be parsed
-	 * @return term which represents the line of the truth-table (in the Quine-McCluskey-Term-Format)
-	 */
- 	private Term parseTerm(String text){
-		StringTokenizer tokenizer = new StringTokenizer(text);
-		ArrayList<Byte> t = new ArrayList<Byte>();
-		while(tokenizer.hasMoreTokens()){
-			String temp = tokenizer.nextToken();
-			if (temp.equals("0")) {
-                t.add((byte)0);
-            } else if (temp.equals("1")) {
-                t.add((byte)1);
-            }else{
-            	throw new IllegalArgumentException("Invalid truth-table - only entrys '0' and '1' are allowed.");
-			}
-        }
-        if (t.size() > 0) {
-            byte[] resultBytes = new byte[t.size()];
-            for(int i = 0; i < t.size(); i++) {
-                resultBytes[i] = (byte)t.get(i);
-            }
-            return new Term(resultBytes);
-        }else {
-            return null;
-        }
-	}
- 	
- 	
+
  	/**
  	 * Places literals in an existing formula inclusive setting the right negation
  	 * @param factory - a formula factory, which has opened the existing formula context

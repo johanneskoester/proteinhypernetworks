@@ -27,8 +27,8 @@ public class TestEnvironment {
 	 *java -jar TestEnvironment.jar command command-specific-options<br>
 	 *commands: (case-insensitive)<br>
 	 *<pre>TDG|dateGeneration|TestDataGeneration path numberOfVariables [numberOfFunctions]
-	 *recon|reconstruction                  0|0lines|0linesMethod|1|1lines|1linesMethod|2|compare|compareBothMethods file [threshold [logLevel = 3]]
-	 *TTP|prediction|TruthTablePrediction   filePINdb fileBOGrid thresholdProteins thresholdComplexes pathDestination numberOfInteractions</pre>
+	 *recon|reconstruction                  0|0lines|0linesMethod|1|1lines|1linesMethod|2|compare|compareBothMethods file [logLevel = 3]
+	 *TTP|prediction|TruthTablePrediction   filePINdb fileBOGrid thresholdProteins thresholdComplexes pathDestination numberOfInteractions minNumberOfObservations</pre>
 	 */
 	public static void main(String[] args) {
 		if(args.length < 1){
@@ -58,20 +58,8 @@ public class TestEnvironment {
 			}
 			String method = args[1];
 			String path = args[2];
-			double threshold = 0;
 			int logLevel = 0;
 			if (args.length >=4){
-				try {
-					threshold = Double.parseDouble(args[3]);
-				}catch (NumberFormatException ne) {
-					System.out.println("The threshold has to be a double.");
-					printUsageMessage();
-					System.exit(1);
-				}
-			}else {
-				threshold = Double.MIN_NORMAL;
-			}
-			if (args.length == 5){
 				try {
 					logLevel = Integer.parseInt(args[4]);
 				}catch (NumberFormatException ne) {
@@ -85,17 +73,17 @@ public class TestEnvironment {
 			
 			Reconstructor recon = new Reconstructor(logLevel);
 			if (method.equalsIgnoreCase("0") || method.equalsIgnoreCase("0lines") || method.equalsIgnoreCase("0linesMethod")){
-				Formula<String> formula = recon.zeroLinesMethod(path, threshold);
+				Formula<String> formula = recon.zeroLinesMethod(path);
 				recon.log.printMessage(0, "Formula in SINF:\n" + formula + "\n");
 				formula = recon.reduceSINF2(formula);
 				recon.log.printMessage(0, "Formula in SINF after reducingSINF2:\n" + formula + "\n\n");
 			}else if  (method.equalsIgnoreCase("1") || method.equalsIgnoreCase("1lines") || method.equalsIgnoreCase("1linesMethod")){
-				Formula<String> formula = recon.oneLinesMethod(path, threshold);
+				Formula<String> formula = recon.oneLinesMethod(path);
 				recon.log.printMessage(0, "Formula in SINF:\n" + formula + "\n");
 				formula = recon.reduceSINF2(formula);
 				recon.log.printMessage(0, "Formula in SINF after reducingSINF2:\n" + formula + "\n\n");
 			}else if  (method.equalsIgnoreCase("2") || method.equalsIgnoreCase("compare") || method.equalsIgnoreCase("compareBothMethods")){
-				recon.compareBothMethods(path, threshold);
+				recon.compareBothMethods(path);
 			}
 		// TruthTablePrediction	
 		}else if (args[0].equalsIgnoreCase("truthTablePrediction") || args[0].equalsIgnoreCase("ttp")){
@@ -110,26 +98,26 @@ public class TestEnvironment {
 			int thresholdComplexes = 0;
 			String pathDestination = args[5] + (args[5].isEmpty() ? "" : "/");
 			int interactions = 0;
-			int modus  = 0;
+			int minNumberOfObservations  = 0;
 			try{
 				thresholdProteins = Integer.parseInt(args[3]);
 				thresholdComplexes = Integer.parseInt(args[4]);
 				interactions = Integer.parseInt(args[6]); 
-				modus = Integer.parseInt(args[7]);
+				minNumberOfObservations = Integer.parseInt(args[7]);
 				
 			}catch(NumberFormatException ne){
-				System.out.println("The tresholds, the number of interactions and the modus have to be ints.");
+				System.out.println("The tresholds, the number of interactions and the minNumberOfObservations have to be ints.");
 				printUsageMessage();
 				System.exit(1);
 			}
 			TruthTablePrediction ttp = new TruthTablePrediction(pathPINdb, pathBioGrid, thresholdProteins);
 			if (interactions == 2){
-				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination, thresholdComplexes, modus);
+				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations);
 			}else if (interactions == 3){
-				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination, thresholdComplexes, modus);
+				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations);
 			}else {
-				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination + "2Interactions", thresholdComplexes, modus);
-				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination + "3Interactions", thresholdComplexes, modus);
+				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination + "2Interactions", thresholdComplexes, minNumberOfObservations);
+				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination + "3Interactions", thresholdComplexes, minNumberOfObservations);
 			}
 		}else{
 			System.out.println("Wrong parameters.");
@@ -144,7 +132,7 @@ public class TestEnvironment {
 		System.out.println("java -jar TestEnvironment.jar command command-specific-options");
 		System.out.println("commands: (case-insensitive)");
 		System.out.println("TDG|dateGeneration|TestDataGeneration\t <path> <numberOfVariables> [<numberOfFunctions>]");
-		System.out.println("recon|reconstruction                 \t 0|0lines|0linesMethod|1|1lines|1linesMethod|2|compare|compareBothMethods <file> [<threshold> [<logLevel> = 3]]");
-		System.out.println("TTP|prediction|TruthTablePrediction  \t <filePINdb> <fileBOGrid> <thresholdProteins> <thresholdComplexes> <pathDestination> <numberOfInteractions> <modus>");
+		System.out.println("recon|reconstruction                 \t 0|0lines|0linesMethod|1|1lines|1linesMethod|2|compare|compareBothMethods <file> [<logLevel> = 3]");
+		System.out.println("TTP|prediction|TruthTablePrediction  \t <filePINdb> <fileBOGrid> <thresholdProteins> <thresholdComplexes> <pathDestination> <numberOfInteractions> <minNumberOfObservations>");
 	}
 }
