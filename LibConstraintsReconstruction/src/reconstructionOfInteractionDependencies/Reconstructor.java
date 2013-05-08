@@ -90,9 +90,9 @@ public class Reconstructor {
 	 */	
 	@SuppressWarnings("unchecked")
 	public void compareBothMethods(String path){
-		if (!checkInputTruthTable(path)){
+		/* if (!checkInputTruthTable(path)){
 			throw new IllegalArgumentException("Invalid Thruth-Table!");
-		}
+		} */
 		log.printMessage(0,"> " + path + "\n");
 		log.printMessage(0, "1\t");
 		quineMcCluskey.Formula quineFormula1 = readOnly1LinesFromTruthtableToFormula(path);
@@ -210,9 +210,9 @@ public class Reconstructor {
 	 */
 	@SuppressWarnings("unchecked")
 	public Formula<String> oneLinesMethod(String path){
-		if (!checkInputTruthTable(path)){
+		/* if (!checkInputTruthTable(path)){
 			throw new IllegalArgumentException("Invalid Thruth-Table!");
-		}
+		} */
 		log.printMessage(0,"> " + path + "\n");
 		log.printMessage(0, "1-lines-method\n");
 		quineMcCluskey.Formula quineFormula = readOnly1LinesFromTruthtableToFormula(path);
@@ -778,9 +778,9 @@ public class Reconstructor {
 	 */	
 	@SuppressWarnings("unchecked")
 	public Formula<String> zeroLinesMethod(String path){
-		if (!checkInputTruthTable(path)){
+		/* if (!checkInputTruthTable(path)){
 			throw new IllegalArgumentException("Invalid Thruth-Table!");
-		}
+		} */
 		log.printMessage(0,"> " + path + "\n");
 		log.printMessage(0, "0-lines-method\n");
 		quineMcCluskey.Formula quineFormula = readOnly0LinesFromTruthtableToFormula(path);

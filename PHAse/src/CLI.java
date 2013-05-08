@@ -105,7 +105,7 @@ public class CLI {
 				System.exit(1);
 			}
 			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, new File(output), cli.minTTComplexes, cli.minObservations);
-		}else{ // predictTruthTables needs a path to a directory, all other methods need an outstram
+		}else{ // predictTruthTables needs a path to a directory, all other methods need an outstream
 			BufferedWriter outstream = null;
 			if (output.equals("-")) {
 				outstream = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -158,6 +158,9 @@ public class CLI {
 				try {
 					Controller.getInstance().reconstructInteractionDependencies(cli.truthTable, outstream);
 				} catch (IOException e) {
+					System.err.println(e.getMessage());
+					e.printStackTrace();
+				} catch (XMLStreamException e) {
 					System.err.println(e.getMessage());
 					e.printStackTrace();
 				}

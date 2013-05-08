@@ -447,7 +447,7 @@ public class TruthTablePrediction {
 
 		if (table.size() < 2) {
 			if(!table.containsKey("1 1")) {
-				//System.out.println("Observed only one interaction."); TODO wieder einkommentieren
+				System.out.println("Observed only one interaction.");
 				return false;
 			}
 		}
@@ -489,8 +489,8 @@ public class TruthTablePrediction {
 			// System.out.print(observationsAsArray[i] + " ");
 		}
 		marker = observationsAsArray[marker]; // every value >= marker is counted as 1, lower values as 0
-		//System.out.print( "threshold " + marker);
-		//System.out.println();		
+		//System.out.print( "threshold " + marker + "\n");
+
 				
 		header = header + "truthValue(T=" + Math.max(marker, minObservations) + ") " + "observed(" + numberOfObservations + ")";
 		try { // Writing the table into a file
@@ -498,19 +498,28 @@ public class TruthTablePrediction {
 			BufferedWriter writer = new BufferedWriter(fstream);
 			writer.write(header);
 			writer.newLine();
+			// checking if only 0 or 1 in truth table
+			boolean onlyZero = true;
+			boolean onlyOne = true;
 			Set<String> lines = table.keySet();
 			Iterator<String> iterator = lines.iterator();
 			while (iterator.hasNext()) {
 				String temp = (String) iterator.next();
 				int absoluteValue = table.get(temp);
 				if (absoluteValue >= minObservations && absoluteValue >= marker) {
+					onlyZero = false;
 					writer.write(temp + " 1 " + absoluteValue);
 				}else{
+					onlyOne = false;
 					writer.write(temp + " 0 " + absoluteValue);
 				}
 				writer.newLine();
 			}
-			// Filling in the missing lines with truth-value 0
+			if (onlyZero){
+				System.out.println("Nullfunction");
+				return false;
+			}
+			// Filling in the missing lines with truth value 0
 			BigInteger lineCounter = BigInteger.ZERO;
 			int numberOfLines = 1 << numberOfVariables;
 			for (int j = 0; j < numberOfLines; j++) {
@@ -531,6 +540,7 @@ public class TruthTablePrediction {
 					if (j == 0) {
 						line = line + " 1 0";
 					} else {
+						onlyOne = false;
 						line = line + " 0 0";
 					}
 					writer.write(line);
@@ -541,6 +551,10 @@ public class TruthTablePrediction {
 				lineCounter = lineCounter.add(BigInteger.ONE);
 			}
 			writer.close();
+			if (onlyOne){
+				System.out.println("Onefunction");
+				return false;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

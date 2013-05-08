@@ -13,7 +13,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Formatter;
 
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import logicProteinHypernetwork.LogicProteinHypernetwork;
 import logicProteinHypernetwork.analysis.complexes.Complex;
@@ -22,6 +25,8 @@ import logicProteinHypernetwork.analysis.perturbationEffects.PerturbationEffect;
 import logicProteinHypernetwork.analysis.pis.PIS;
 import modalLogic.formula.Formula;
 import modalLogic.formula.io.InvalidFormulaException;
+import modalLogic.formula.io.FormulaWriter;
+import modalLogic.formula.io.MathMLWriter;
 import proteinHypernetwork.NetworkEntity;
 import proteinHypernetwork.ProteinHypernetwork;
 import proteinHypernetwork.decoder.HypernetworkMLDecoder;
@@ -114,10 +119,22 @@ public class Controller {
 		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations);
 	}
 	
-	public void reconstructInteractionDependencies(String truthTable, BufferedWriter writer) throws IOException{
+	public void reconstructInteractionDependencies(String truthTable, BufferedWriter writer) throws IOException, XMLStreamException{
 		Reconstructor reconstructor = new Reconstructor(-1);
 		Formula<String> formula = reconstructor.zeroLinesMethod(truthTable);
 		writer.write(formula.toString());
-		//TODO converting formula in MathMl
+		writer.newLine();
+		
+		XMLOutputFactory output = XMLOutputFactory.newInstance();
+		XMLStreamWriter xmlWriter = output.createXMLStreamWriter(writer);
+		FormulaWriter<String > fwriter = new MathMLWriter<String>(xmlWriter);
+		try {
+			fwriter.write(formula);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		xmlWriter.close();
+		writer.close();
 	}
 }
