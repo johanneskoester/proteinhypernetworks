@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Formatter;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -109,14 +108,14 @@ public class Controller {
 		writer.close();
 	}
 	
-	public void predictTruthTables(String network, String complexes, File destination, int minComplexes, int minObservations) {
+	public void predictTruthTables(String network, String complexes, File destination, int minComplexes, int minObservations, boolean learnThreshold) {
 		if(!destination.exists()) {
 			destination.mkdir();
 		} 
 		TruthTablePrediction ttp = new TruthTablePrediction(complexes, network, 10);
 		// ttp.printProteins();
-		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations);
-		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations);
+		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations, learnThreshold);
+		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations, learnThreshold);
 	}
 	
 	public void reconstructInteractionDependencies(String truthTable, BufferedWriter writer) throws IOException, XMLStreamException{

@@ -52,9 +52,12 @@ public class CLI {
 	@Parameter(names = { "-mc", "--min-complexes" }, description = "Minimum number of complexes that have to contain a pair of proteins for truth table prediction.")
 	private int minTTComplexes = 3;
 	
-	@Parameter(names = { "-mo", "--min-observations" }, description = "Minimum number of observations for a line in a predicted truth table to be counted as 1.")
-	private int minObservations = 0;
+	@Parameter(names = { "-lt", "--learn-threshold" }, description = "Threshold for a line in a predicted truth table to be counted as 1 will be learned.")
+	private boolean learnThreshold;
 
+	@Parameter(names = { "-mo", "--min-observations" }, description = "Minimum number of observations for a line in a predicted truth table to be counted as 1.")
+	private int minObservations = -1;
+	
 	@Parameter(names = { "-t", "--threads" }, description = "Number of threads to use (1 per default).")
 	private int threads = 1;
 
@@ -104,7 +107,10 @@ public class CLI {
 				jc.usage();
 				System.exit(1);
 			}
-			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, new File(output), cli.minTTComplexes, cli.minObservations);
+			if (cli.minObservations == -1){
+				cli.learnThreshold = true;
+			}
+			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, new File(output), cli.minTTComplexes, cli.minObservations, cli.learnThreshold);
 		}else{ // predictTruthTables needs a path to a directory, all other methods need an outstream
 			BufferedWriter outstream = null;
 			if (output.equals("-")) {

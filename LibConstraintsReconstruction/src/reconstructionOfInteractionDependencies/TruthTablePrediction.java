@@ -226,7 +226,7 @@ public class TruthTablePrediction {
 	 * 
 	 * @param path
 	 *            - path to folder in which the truth-tables are saved
-	 * @param threshold
+	 * @param minComplexes
 	 *            - threshold in how much complexes at least two of the three
 	 *            proteins for each table have to be
 	 * @param minObservations
@@ -234,7 +234,7 @@ public class TruthTablePrediction {
 	 *            predicted truth table to be counted as 1
 	 */
 	public void predictTruthTablesWith2InteractionsFor3Proteins(
-			String pathDestination, int threshold, int minObservations) {
+			String pathDestination, int minComplexes, int minObservations, boolean learnThreshold) {
 		Collection<Protein> p = proteins.values();
 		Iterator<Protein> iterator = p.iterator();
 		while (iterator.hasNext()) {
@@ -256,7 +256,7 @@ public class TruthTablePrediction {
 						// Filling the truth-table for the three proteins
 						if (fillTruthTableFor3Proteins(p1, p2, p3, new File(
 								pathDestination, "table" + tableCounter
-										+ ".csv").getPath(), threshold, minObservations)) {
+										+ ".csv").getPath(), minComplexes, minObservations, learnThreshold)) {
 							tableCounter++;
 						}
 					}
@@ -271,7 +271,7 @@ public class TruthTablePrediction {
 	 * 
 	 * @param path
 	 *            - path to folder in which the truth-tables are saved
-	 * @param threshold
+	 * @param minComplexes
 	 *            - threshold in how much complexes at least two of the three
 	 *            proteins for each table have to be
 	 * @param minObservations
@@ -279,7 +279,7 @@ public class TruthTablePrediction {
 	 *            predicted truth table to be counted as 1
 	 */
 	public void predictTruthTablesWith3InteractionsFor3Proteins(
-			String pathDestination, int threshold, int minObservations) {
+			String pathDestination, int minComplexes, int minObservations, boolean learnThreshold) {
 		Collection<Protein> p = proteins.values();
 		Iterator<Protein> iterator = p.iterator();
 		while (iterator.hasNext()) {
@@ -310,7 +310,7 @@ public class TruthTablePrediction {
 								if (fillTruthTableFor3Proteins(p1, p2, p3,
 										new File(pathDestination, "table"
 												+ tableCounter + ".csv")
-												.getPath(), threshold, minObservations)) {
+												.getPath(), minComplexes, minObservations, learnThreshold)) {
 									tableCounter++;
 								}
 							}
@@ -343,7 +343,7 @@ public class TruthTablePrediction {
 	 *         otherwise
 	 */
 	public boolean fillTruthTableFor3Proteins(Protein p1, Protein p2,
-			Protein p3, String path, int minNumberOfComplexes, int minObservations) {
+			Protein p3, String path, int minNumberOfComplexes, int minObservations, boolean learnThreshold) {
 		ArrayList<Proteincomplex> complexList = getComplexesWithMin2Of3SpecifiedProteins(
 				p1, p2, p3);
 		String line = "";
@@ -444,55 +444,60 @@ public class TruthTablePrediction {
 			}
 		}
 		Map<String, Integer> table = counts.getMap();
-
+		// previous count also contained the observations of the line with only 0
+		numberOfObservations = counts.getTotalCount();
+		
 		if (table.size() < 2) {
 			if(!table.containsKey("1 1")) {
-				System.out.println("Observed only one interaction.");
+			    System.out.println("Observed only one interaction."); 
 				return false;
 			}
 		}
+		
 		// calculating the threshold for the truthValues
 		// the threshold partitions the values where the difference 
 		// of the means of the two partitions reaches the maximum
-		Collection<Integer> observations = table.values();
-		Integer[] observationsAsArray = new Integer[observations.size()+1];
-		observationsAsArray = observations.toArray(new Integer[0]);
-		Arrays.sort(observationsAsArray);
-		double maxMeanDifference = 0; // storing the actual maximum difference between the means
-		int counter = 0; // counting the elements in the partitions
-		int marker = 0; // marking the actual position for partitioning with the threshold
-		for (int i = 0; i < observationsAsArray.length; i++) {
-			double temp1 = 0;
-			double temp2 = 0;			
-			// summing up the first part of the values
-			for (int j = 0; j < i; j++) {
-				temp1 += observationsAsArray[j];
-				counter++;
+		int threshold = 0;
+		if (learnThreshold){
+			Collection<Integer> observations = table.values();
+			Integer[] observationsAsArray = new Integer[observations.size()];
+			observationsAsArray = observations.toArray(new Integer[0]);
+			Arrays.sort(observationsAsArray);
+			double maxMeanDifference = 0; // storing the actual maximum difference between the means
+			int marker = 0; // marking the actual position for partitioning with the threshold
+			int counter = 0; // counting the elements in the partitions
+			for (int i = 0; i < observationsAsArray.length; i++) {
+				double temp1 = 0;
+				double temp2 = 0;			
+				// summing up the first part of the values
+				for (int j = 0; j < i; j++) {
+					temp1 += observationsAsArray[j];
+					counter++;
+				}
+				if (counter != 0) { // calculating the mean for the first partition
+					temp1 = temp1 / counter;
+					counter = 0;
+				}
+				// summing up the second part of the values
+				for (int k = i; k < observationsAsArray.length; k++) {
+					temp2 += observationsAsArray[k];
+					counter++;
+				}
+				if (counter != 0) { // calculating the mean for the second partition
+					temp2 = temp2 / counter;
+					counter = 0;
+				}
+				if ((temp2 - temp1) > maxMeanDifference) {
+					maxMeanDifference = (temp2 - temp1);
+					marker = i;
+				}
+				// System.out.print(observationsAsArray[i] + " ");
 			}
-			if (counter != 0) { // calculating the mean for the first partition
-				temp1 = temp1 / counter;
-				counter = 0;
-			}
-			// summing up the second part of the values
-			for (int k = i; k < observationsAsArray.length; k++) {
-				temp2 += observationsAsArray[k];
-				counter++;
-			}
-			if (counter != 0) { // calculating the mean for the second partition
-				temp2 = temp2 / counter;
-				counter = 0;
-			}
-			if ((temp2 - temp1) > maxMeanDifference) {
-				maxMeanDifference = (temp2 - temp1);
-				marker = i;
-			}
-			// System.out.print(observationsAsArray[i] + " ");
+			threshold = observationsAsArray[marker]; // every value >= marker is counted as 1, lower values as 0
+			//System.out.print( "threshold " + marker + "\n");
 		}
-		marker = observationsAsArray[marker]; // every value >= marker is counted as 1, lower values as 0
-		//System.out.print( "threshold " + marker + "\n");
-
 				
-		header = header + "truthValue(T=" + Math.max(marker, minObservations) + ") " + "observed(" + numberOfObservations + ")";
+		header = header + "truthValue(T=" + Math.max(threshold, minObservations) + ") " + "observed(" + numberOfObservations + ")";
 		try { // Writing the table into a file
 			FileWriter fstream = new FileWriter(path);
 			BufferedWriter writer = new BufferedWriter(fstream);
@@ -506,7 +511,7 @@ public class TruthTablePrediction {
 			while (iterator.hasNext()) {
 				String temp = (String) iterator.next();
 				int absoluteValue = table.get(temp);
-				if (absoluteValue >= minObservations && absoluteValue >= marker) {
+				if (absoluteValue >= minObservations && absoluteValue >= threshold) {
 					onlyZero = false;
 					writer.write(temp + " 1 " + absoluteValue);
 				}else{

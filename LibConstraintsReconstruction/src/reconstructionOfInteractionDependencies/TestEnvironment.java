@@ -28,7 +28,7 @@ public class TestEnvironment {
 	 *commands: (case-insensitive)<br>
 	 *<pre>TDG|dateGeneration|TestDataGeneration path numberOfVariables [numberOfFunctions]
 	 *recon|reconstruction                  0|0lines|0linesMethod|1|1lines|1linesMethod|2|compare|compareBothMethods file [logLevel = 3]
-	 *TTP|prediction|TruthTablePrediction   filePINdb fileBOGrid thresholdProteins thresholdComplexes pathDestination numberOfInteractions minNumberOfObservations</pre>
+	 *TTP|prediction|TruthTablePrediction   filePINdb fileBOGrid thresholdProteins thresholdComplexes pathDestination numberOfInteractions minNumberOfObservations learnThreshold</pre>
 	 */
 	public static void main(String[] args) {
 		if(args.length < 1){
@@ -99,11 +99,13 @@ public class TestEnvironment {
 			String pathDestination = args[5] + (args[5].isEmpty() ? "" : "/");
 			int interactions = 0;
 			int minNumberOfObservations  = 0;
+			boolean learnThreshold = false;
 			try{
 				thresholdProteins = Integer.parseInt(args[3]);
 				thresholdComplexes = Integer.parseInt(args[4]);
 				interactions = Integer.parseInt(args[6]); 
 				minNumberOfObservations = Integer.parseInt(args[7]);
+				learnThreshold = Boolean.getBoolean(args[8]);
 				
 			}catch(NumberFormatException ne){
 				System.out.println("The tresholds, the number of interactions and the minNumberOfObservations have to be ints.");
@@ -112,12 +114,12 @@ public class TestEnvironment {
 			}
 			TruthTablePrediction ttp = new TruthTablePrediction(pathPINdb, pathBioGrid, thresholdProteins);
 			if (interactions == 2){
-				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations);
+				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations, learnThreshold);
 			}else if (interactions == 3){
-				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations);
+				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations, learnThreshold);
 			}else {
-				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination + "2Interactions", thresholdComplexes, minNumberOfObservations);
-				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination + "3Interactions", thresholdComplexes, minNumberOfObservations);
+				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination + "2Interactions", thresholdComplexes, minNumberOfObservations, learnThreshold);
+				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination + "3Interactions", thresholdComplexes, minNumberOfObservations, learnThreshold);
 			}
 		}else{
 			System.out.println("Wrong parameters.");
@@ -133,6 +135,6 @@ public class TestEnvironment {
 		System.out.println("commands: (case-insensitive)");
 		System.out.println("TDG|dateGeneration|TestDataGeneration\t <path> <numberOfVariables> [<numberOfFunctions>]");
 		System.out.println("recon|reconstruction                 \t 0|0lines|0linesMethod|1|1lines|1linesMethod|2|compare|compareBothMethods <file> [<logLevel> = 3]");
-		System.out.println("TTP|prediction|TruthTablePrediction  \t <filePINdb> <fileBOGrid> <thresholdProteins> <thresholdComplexes> <pathDestination> <numberOfInteractions> <minNumberOfObservations>");
+		System.out.println("TTP|prediction|TruthTablePrediction  \t <filePINdb> <fileBOGrid> <thresholdProteins> <thresholdComplexes> <pathDestination> <numberOfInteractions> <minNumberOfObservations> <learnThreshold>");
 	}
 }
