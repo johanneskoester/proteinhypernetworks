@@ -75,6 +75,9 @@ public class CLI {
 	
 	@Parameter(names = { "-r", "--reconstruct" }, description = "Load a truth table with protein interactions as variables and reconstruct the interaction dependencies.")
 	private String truthTable;
+	
+	@Parameter(names = { "-mml", "--math-ml" }, description = "Output of logical formulas in MathML instead of plain text.")
+	private boolean mathML;
 
 	public static void main(String[] args) {
 		CLI cli = new CLI();
@@ -98,8 +101,12 @@ public class CLI {
 			jc.usage();
 			System.exit(1);
 		}
-
-		String output = cli.parameters.get(0);
+		String output;
+		if (cli.parameters.size() > 0){
+			output = cli.parameters.get(0);
+		}else{
+			output = "-";
+		}
 
 		Controller.getInstance().setThreads(cli.threads);
 		if (cli.predictTruthTables) {
@@ -162,7 +169,7 @@ public class CLI {
 				}
 			}else if (cli.truthTable != null){
 				try {
-					Controller.getInstance().reconstructInteractionDependencies(cli.truthTable, outstream);
+					Controller.getInstance().reconstructInteractionDependencies(cli.truthTable, outstream, cli.mathML);
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
 					e.printStackTrace();

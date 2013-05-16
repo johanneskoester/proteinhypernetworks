@@ -118,22 +118,24 @@ public class Controller {
 		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations, learnThreshold);
 	}
 	
-	public void reconstructInteractionDependencies(String truthTable, BufferedWriter writer) throws IOException, XMLStreamException{
+	public void reconstructInteractionDependencies(String truthTable, BufferedWriter writer, boolean mathML) throws IOException, XMLStreamException{
 		Reconstructor reconstructor = new Reconstructor(-1);
 		Formula<String> formula = reconstructor.zeroLinesMethod(truthTable);
-		writer.write(formula.toString());
-		writer.newLine();
-		
-		XMLOutputFactory output = XMLOutputFactory.newInstance();
-		XMLStreamWriter xmlWriter = output.createXMLStreamWriter(writer);
-		FormulaWriter<String > fwriter = new MathMLWriter<String>(xmlWriter);
-		try {
-			fwriter.write(formula);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		xmlWriter.close();
+		if (mathML) {
+			XMLOutputFactory output = XMLOutputFactory.newInstance();
+			XMLStreamWriter xmlWriter = output.createXMLStreamWriter(writer);
+			FormulaWriter<String > fwriter = new MathMLWriter<String>(xmlWriter);
+			try {
+				fwriter.write(formula);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+			xmlWriter.close();
+		}else{
+			writer.write(formula.toString());
+			writer.newLine();
+		}		
 		writer.close();
 	}
 }
