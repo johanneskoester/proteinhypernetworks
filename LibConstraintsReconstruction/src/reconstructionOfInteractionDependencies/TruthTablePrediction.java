@@ -234,7 +234,8 @@ public class TruthTablePrediction {
 	 *            predicted truth table to be counted as 1
 	 */
 	public void predictTruthTablesWith2InteractionsFor3Proteins(
-			String pathDestination, int minComplexes, int minObservations, boolean learnThreshold) {
+			String pathDestination, int minComplexes, int minObservations, 
+			boolean learnThreshold, boolean filter) {
 		Collection<Protein> p = proteins.values();
 		Iterator<Protein> iterator = p.iterator();
 		while (iterator.hasNext()) {
@@ -254,9 +255,9 @@ public class TruthTablePrediction {
 						// System.out.println(p1.getName() + ", " + p2.getName()
 						// + ", " + p3.getName());
 						// Filling the truth-table for the three proteins
-						if (fillTruthTableFor3Proteins(p1, p2, p3, new File(
-								pathDestination, "table" + tableCounter
-										+ ".csv").getPath(), minComplexes, minObservations, learnThreshold)) {
+						if (fillTruthTableFor3Proteins(p1, p2, p3, 
+								new File(pathDestination, "table" + tableCounter + ".csv").getPath(), 
+								minComplexes, minObservations, learnThreshold, filter)) {
 							tableCounter++;
 						}
 					}
@@ -279,7 +280,8 @@ public class TruthTablePrediction {
 	 *            predicted truth table to be counted as 1
 	 */
 	public void predictTruthTablesWith3InteractionsFor3Proteins(
-			String pathDestination, int minComplexes, int minObservations, boolean learnThreshold) {
+			String pathDestination, int minComplexes, int minObservations, 
+			boolean learnThreshold, boolean filter) {
 		Collection<Protein> p = proteins.values();
 		Iterator<Protein> iterator = p.iterator();
 		while (iterator.hasNext()) {
@@ -305,12 +307,10 @@ public class TruthTablePrediction {
 							// We take only triple where p2 interacts with p3 to
 							// get only tables with three interactions
 							if (p2.interactsWithProtein(p3)) {
-								// Filling the truth-table for the three
-								// proteins
+								// Filling the truth-table for the three proteins
 								if (fillTruthTableFor3Proteins(p1, p2, p3,
-										new File(pathDestination, "table"
-												+ tableCounter + ".csv")
-												.getPath(), minComplexes, minObservations, learnThreshold)) {
+										new File(pathDestination, "table" + tableCounter + ".csv").getPath(), 
+										minComplexes, minObservations, learnThreshold, filter)) {
 									tableCounter++;
 								}
 							}
@@ -328,7 +328,7 @@ public class TruthTablePrediction {
 	 * @param p1
 	 *            - a protein
 	 * @param p2
-	 *            - protein
+	 *            - a protein
 	 * @param p3
 	 *            - a protein
 	 * @param path
@@ -342,8 +342,10 @@ public class TruthTablePrediction {
 	 * @return true iff the truth-table was filled successfully and false
 	 *         otherwise
 	 */
-	public boolean fillTruthTableFor3Proteins(Protein p1, Protein p2,
-			Protein p3, String path, int minNumberOfComplexes, int minObservations, boolean learnThreshold) {
+	public boolean fillTruthTableFor3Proteins(Protein p1, Protein p2, Protein p3, 
+			String path, int minNumberOfComplexes, int minObservations, 
+			boolean learnThreshold, boolean filter) {
+		
 		ArrayList<Proteincomplex> complexList = getComplexesWithMin2Of3SpecifiedProteins(
 				p1, p2, p3);
 		String line = "";
@@ -360,7 +362,7 @@ public class TruthTablePrediction {
 		boolean p2p3 = p2.interactsWithProtein(p3);
 		boolean p3p1 = p3.interactsWithProtein(p1);
 		int numberOfVariables = 0;
-		// Building the header of the truth-table and counting the number of
+		// Building the header of the truth table and counting the number of
 		// variables
 		String header = "";
 		if (p1p2) {
@@ -421,8 +423,10 @@ public class TruthTablePrediction {
 					counts.plus1("1 1");
 				} else if (p1p2 && complex.contains2Proteins(p1, p2)) {
 					counts.plus1("1 0");
-				} else if (p2p3 && complex.contains2Proteins(p2, p3)) {
-					counts.plus1("0 1");
+				} else if (p1p2 && p2p3 && complex.contains2Proteins(p2, p3)) {
+					counts.plus1("0 1"); // p2p3 could be in first or second column
+				} else if (!p1p2 && p2p3 && complex.contains2Proteins(p2, p3)) {
+					counts.plus1("1 0");
 				} else if (p3p1 && complex.contains2Proteins(p3, p1)) {
 					counts.plus1("0 1");
 				}
@@ -504,26 +508,30 @@ public class TruthTablePrediction {
 			writer.write(header);
 			writer.newLine();
 			// checking if only 0 or 1 in truth table
-			boolean onlyZero = true;
-			boolean onlyOne = true;
-			Set<String> lines = table.keySet();
-			Iterator<String> iterator = lines.iterator();
-			while (iterator.hasNext()) {
-				String temp = (String) iterator.next();
-				int absoluteValue = table.get(temp);
-				if (absoluteValue >= minObservations && absoluteValue >= threshold) {
-					onlyZero = false;
-					writer.write(temp + " 1 " + absoluteValue);
-				}else{
-					onlyOne = false;
-					writer.write(temp + " 0 " + absoluteValue);
-				}
-				writer.newLine();
-			}
-			if (onlyZero){
-				System.out.println("Nullfunction");
-				return false;
-			}
+			 boolean onlyZeros = true; // a table with only truth value 0 delivers the nullfuntion ⊥
+             boolean onlyOnes = true; // a table with only truth value 1 delivers the onefunction ⊤
+             int numberOfXORLines = 0; // a table with only one xor-line (01, 10, 001, 010, 100) with truth value 1 
+             						   // delivers only implications A⇒⊥
+             Set<String> lines = table.keySet();
+             Iterator<String> iterator = lines.iterator();
+             while (iterator.hasNext()) {
+                     String temp = (String) iterator.next();
+                     int absoluteValue = table.get(temp);
+                     if (absoluteValue >= minObservations && absoluteValue >= threshold) {
+                             onlyZeros = false;
+                             writer.write(temp + " 1 " + absoluteValue);
+                     }else{
+                             onlyOnes = false;
+                             writer.write(temp + " 0 " + absoluteValue);
+                     }
+                     writer.newLine();
+             }
+             if (onlyZeros){
+ 				File f = new File(path);
+ 				f.delete(); // deleting the file in case output was already written
+                System.out.println("Nullfunction");
+                return false;
+             }
 			// Filling in the missing lines with truth value 0
 			BigInteger lineCounter = BigInteger.ZERO;
 			int numberOfLines = 1 << numberOfVariables;
@@ -545,21 +553,34 @@ public class TruthTablePrediction {
 					if (j == 0) {
 						line = line + " 1 0";
 					} else {
-						onlyOne = false;
+						onlyOnes = false;
 						line = line + " 0 0";
 					}
 					writer.write(line);
 					if (j < numberOfLines - 1) {
 						writer.newLine();
 					}
+				} else if (lineCounter.bitCount() == 1){
+					int value = table.get(line);
+					if (value >= minObservations && value >= threshold){
+						numberOfXORLines++;
+					}
 				}
 				lineCounter = lineCounter.add(BigInteger.ONE);
 			}
 			writer.close();
-			if (onlyOne){
-				System.out.println("Onefunction");
-				return false;
+			if (onlyOnes){
+				File f = new File(path);
+				f.delete(); // deleting the file in case output was already written
+                System.out.println("Onefunction");
+                return false;
+			}else if (filter && numberOfXORLines == 1){
+				File f = new File(path);
+				f.delete(); // deleting the file in case output was already written
+                System.out.println("Only one xor-line (01, 10, 001, 010, 100) delivers only one implication A⇒⊥"); 
+                return false;
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

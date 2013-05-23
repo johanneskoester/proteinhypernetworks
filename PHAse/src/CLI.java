@@ -58,6 +58,9 @@ public class CLI {
 	@Parameter(names = { "-mo", "--min-observations" }, description = "Minimum number of observations for a line in a predicted truth table to be counted as 1.")
 	private int minObservations = -1;
 	
+	@Parameter(names = { "-ft", "--filter-truthtables" }, description = "Filtering predicted truth tables to remove tables that deliver only implications A⇒⊥.")
+	private boolean filter;
+	
 	@Parameter(names = { "-t", "--threads" }, description = "Number of threads to use (1 per default).")
 	private int threads = 1;
 
@@ -117,7 +120,8 @@ public class CLI {
 			if (cli.minObservations == -1){
 				cli.learnThreshold = true;
 			}
-			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, new File(output), cli.minTTComplexes, cli.minObservations, cli.learnThreshold);
+			Controller.getInstance().predictTruthTables(cli.network, cli.complexes, new File(output), 
+					cli.minTTComplexes, cli.minObservations, cli.learnThreshold, cli.filter);
 		}else{ // predictTruthTables needs a path to a directory, all other methods need an outstream
 			BufferedWriter outstream = null;
 			if (output.equals("-")) {

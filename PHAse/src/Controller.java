@@ -108,14 +108,15 @@ public class Controller {
 		writer.close();
 	}
 	
-	public void predictTruthTables(String network, String complexes, File destination, int minComplexes, int minObservations, boolean learnThreshold) {
+	public void predictTruthTables(String network, String complexes, File destination, 
+			int minComplexes, int minObservations, boolean learnThreshold, boolean filter) {
 		if(!destination.exists()) {
 			destination.mkdir();
 		} 
 		TruthTablePrediction ttp = new TruthTablePrediction(complexes, network, 10);
 		// ttp.printProteins();
-		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations, learnThreshold);
-		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations, learnThreshold);
+		ttp.predictTruthTablesWith2InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations, learnThreshold, filter);
+		ttp.predictTruthTablesWith3InteractionsFor3Proteins(destination.getPath(), minComplexes, minObservations, learnThreshold, filter);
 	}
 	
 	public void reconstructInteractionDependencies(String truthTable, BufferedWriter writer, boolean mathML) throws IOException, XMLStreamException{

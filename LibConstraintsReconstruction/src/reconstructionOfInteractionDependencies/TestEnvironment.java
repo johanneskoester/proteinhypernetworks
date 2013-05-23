@@ -113,13 +113,14 @@ public class TestEnvironment {
 				System.exit(1);
 			}
 			TruthTablePrediction ttp = new TruthTablePrediction(pathPINdb, pathBioGrid, thresholdProteins);
+			// TODO parameter for filtering instead of "false"
 			if (interactions == 2){
-				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations, learnThreshold);
+				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations, learnThreshold, false);
 			}else if (interactions == 3){
-				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations, learnThreshold);
+				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination, thresholdComplexes, minNumberOfObservations, learnThreshold, false);
 			}else {
-				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination + "2Interactions", thresholdComplexes, minNumberOfObservations, learnThreshold);
-				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination + "3Interactions", thresholdComplexes, minNumberOfObservations, learnThreshold);
+				ttp.predictTruthTablesWith2InteractionsFor3Proteins(pathDestination + "2Interactions", thresholdComplexes, minNumberOfObservations, learnThreshold, false);
+				ttp.predictTruthTablesWith3InteractionsFor3Proteins(pathDestination + "3Interactions", thresholdComplexes, minNumberOfObservations, learnThreshold, false);
 			}
 		}else{
 			System.out.println("Wrong parameters.");
